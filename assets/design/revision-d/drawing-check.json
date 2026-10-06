@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "galleryCount": 8,
+  "artworkCount": 8,
+  "footprint": [
+    54,
+    54
+  ],
+  "netGallerySizes": [
+    "13.8 x 13.8",
+    "14.8 x 13.8"
+  ],
+  "galleryHeight": 12,
+  "doorClearWidth": 3.2,
+  "pedestalsInsideClearRooms": true,
+  "mainViewingDistance": 7.5,
+  "sectionChain": [
+    15,
+    4,
+    16,
+    4,
+    15
+  ],
+  "note": "2D dimension and placement checks only; no website or model changes."
+}

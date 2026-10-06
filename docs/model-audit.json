@@ -1,0 +1,103 @@
+{
+  "revision": "D-open",
+  "cameraSegments": 1721,
+  "raysPerSegment": 7,
+  "collisionCount": 0,
+  "collisions": [],
+  "entryViews": [
+    {
+      "room": 1,
+      "unobstructed": true
+    },
+    {
+      "room": 2,
+      "unobstructed": true
+    },
+    {
+      "room": 3,
+      "unobstructed": true
+    },
+    {
+      "room": 4,
+      "unobstructed": true
+    },
+    {
+      "room": 5,
+      "unobstructed": true
+    },
+    {
+      "room": 6,
+      "unobstructed": true
+    },
+    {
+      "room": 7,
+      "unobstructed": true
+    },
+    {
+      "room": 8,
+      "unobstructed": true
+    }
+  ],
+  "uv": [
+    {
+      "mesh": "Room_01",
+      "vertices": 3712,
+      "uvLayers": 1,
+      "inRange": true
+    },
+    {
+      "mesh": "Room_02",
+      "vertices": 4320,
+      "uvLayers": 1,
+      "inRange": true
+    },
+    {
+      "mesh": "Room_03",
+      "vertices": 4256,
+      "uvLayers": 1,
+      "inRange": true
+    },
+    {
+      "mesh": "Room_04",
+      "vertices": 3576,
+      "uvLayers": 1,
+      "inRange": true
+    },
+    {
+      "mesh": "Room_05",
+      "vertices": 4248,
+      "uvLayers": 1,
+      "inRange": true
+    },
+    {
+      "mesh": "Room_06",
+      "vertices": 3480,
+      "uvLayers": 1,
+      "inRange": true
+    },
+    {
+      "mesh": "Room_07",
+      "vertices": 5800,
+      "uvLayers": 1,
+      "inRange": true
+    },
+    {
+      "mesh": "Room_08",
+      "vertices": 4600,
+      "uvLayers": 1,
+      "inRange": true
+    },
+    {
+      "mesh": "Promenade",
+      "vertices": 88,
+      "uvLayers": 1,
+      "inRange": true
+    },
+    {
+      "mesh": "Court",
+      "vertices": 1016,
+      "uvLayers": 1,
+      "inRange": true
+    }
+  ]
+}

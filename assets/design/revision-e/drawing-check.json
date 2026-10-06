@@ -1,0 +1,210 @@
+{
+  "status": "passed",
+  "scope": "2D room footprints, sampled circulation, entry branches and artwork containment only; no 3D simulation",
+  "minimumRoomCenterlineGap": 4.272,
+  "corridorRoomIntersections": [],
+  "branchClashes": [],
+  "artworkChecks": [
+    {
+      "room": 1,
+      "artworkPlinthInside": true,
+      "viewpointInside": true,
+      "topClearance": 4.35
+    },
+    {
+      "room": 2,
+      "artworkPlinthInside": true,
+      "viewpointInside": true,
+      "topClearance": 7.1499999999999995
+    },
+    {
+      "room": 3,
+      "artworkPlinthInside": true,
+      "viewpointInside": true,
+      "topClearance": 7.35
+    },
+    {
+      "room": 4,
+      "artworkPlinthInside": true,
+      "viewpointInside": true,
+      "topClearance": 7.35
+    },
+    {
+      "room": 5,
+      "artworkPlinthInside": true,
+      "viewpointInside": true,
+      "topClearance": 7.35
+    },
+    {
+      "room": 6,
+      "artworkPlinthInside": true,
+      "viewpointInside": true,
+      "topClearance": 6.85
+    },
+    {
+      "room": 7,
+      "artworkPlinthInside": true,
+      "viewpointInside": true,
+      "topClearance": 6.35
+    },
+    {
+      "room": 8,
+      "artworkPlinthInside": true,
+      "viewpointInside": true,
+      "topClearance": 8.350000000000001
+    }
+  ],
+  "roomPairs": [
+    {
+      "a": 1,
+      "b": 2,
+      "wallCenterlineGap": 5.745
+    },
+    {
+      "a": 1,
+      "b": 3,
+      "wallCenterlineGap": 7.479
+    },
+    {
+      "a": 1,
+      "b": 4,
+      "wallCenterlineGap": 23.049
+    },
+    {
+      "a": 1,
+      "b": 5,
+      "wallCenterlineGap": 36.764
+    },
+    {
+      "a": 1,
+      "b": 6,
+      "wallCenterlineGap": 46.973
+    },
+    {
+      "a": 1,
+      "b": 7,
+      "wallCenterlineGap": 65.2
+    },
+    {
+      "a": 1,
+      "b": 8,
+      "wallCenterlineGap": 83.741
+    },
+    {
+      "a": 2,
+      "b": 3,
+      "wallCenterlineGap": 12.405
+    },
+    {
+      "a": 2,
+      "b": 4,
+      "wallCenterlineGap": 8.756
+    },
+    {
+      "a": 2,
+      "b": 5,
+      "wallCenterlineGap": 27.465
+    },
+    {
+      "a": 2,
+      "b": 6,
+      "wallCenterlineGap": 29.953
+    },
+    {
+      "a": 2,
+      "b": 7,
+      "wallCenterlineGap": 55.878
+    },
+    {
+      "a": 2,
+      "b": 8,
+      "wallCenterlineGap": 69.804
+    },
+    {
+      "a": 3,
+      "b": 4,
+      "wallCenterlineGap": 6.899
+    },
+    {
+      "a": 3,
+      "b": 5,
+      "wallCenterlineGap": 12.729
+    },
+    {
+      "a": 3,
+      "b": 6,
+      "wallCenterlineGap": 25.81
+    },
+    {
+      "a": 3,
+      "b": 7,
+      "wallCenterlineGap": 41.967
+    },
+    {
+      "a": 3,
+      "b": 8,
+      "wallCenterlineGap": 59.575
+    },
+    {
+      "a": 4,
+      "b": 5,
+      "wallCenterlineGap": 6.76
+    },
+    {
+      "a": 4,
+      "b": 6,
+      "wallCenterlineGap": 4.272
+    },
+    {
+      "a": 4,
+      "b": 7,
+      "wallCenterlineGap": 31.396
+    },
+    {
+      "a": 4,
+      "b": 8,
+      "wallCenterlineGap": 44.86
+    },
+    {
+      "a": 5,
+      "b": 6,
+      "wallCenterlineGap": 9.291
+    },
+    {
+      "a": 5,
+      "b": 7,
+      "wallCenterlineGap": 5.834
+    },
+    {
+      "a": 5,
+      "b": 8,
+      "wallCenterlineGap": 26.566
+    },
+    {
+      "a": 6,
+      "b": 7,
+      "wallCenterlineGap": 19.931
+    },
+    {
+      "a": 6,
+      "b": 8,
+      "wallCenterlineGap": 19.225
+    },
+    {
+      "a": 7,
+      "b": 8,
+      "wallCenterlineGap": 6.61
+    }
+  ],
+  "artworkCount": 8,
+  "heights": [
+    11,
+    12,
+    15,
+    13,
+    16,
+    12,
+    14,
+    18
+  ]
+}

@@ -1,0 +1,22 @@
+import fs from 'node:fs/promises';
+import sharp from 'sharp';
+const spec=JSON.parse(await fs.readFile('assets/design/model-spec.json','utf8'));
+const t=(x,y,s,n=16)=>`<text x="${x}" y="${y}" font-family="Arial" font-size="${n}" fill="#273a31">${s}</text>`;
+const l=(x,y,X,Y)=>`<path d="M${x} ${y} L${X} ${Y}" stroke="#627b6b" stroke-width="1" fill="none"/>`;
+const r=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#hatch)" stroke="#273a31"/>`;
+const d=(x,y,X,Y,s)=>l(x,y,X,Y)+l(x-4,y-5,x+4,y+5)+l(X-4,Y-5,X+4,Y+5)+t((x+X)/2+8,(y+Y)/2-9,s,13);
+let c=t(65,65,`STILL / CONSTRUCTION SECTIONS / REV ${spec.revision}`,18)+t(65,112,'Thickness, connection, contact.',35)+t(65,154,'Dimensioned cuts through the same component specification / all dimensions in millimetres',16)+l(65,180,1735,180);
+c+=t(100,235,'A-A / CANVAS FOOT &amp; REAR FIXING',19);
+const canvas=spec.assets.find(a=>a.id==='canvas');
+for(const p of canvas.parts){if(Math.abs(p.p[0]+.752)>p.s[0]/2)continue;const low=Math.max(0,p.p[1]-p.s[1]/2),high=Math.min(.62,p.p[1]+p.s[1]/2);if(high>low)c+=r(370+(p.p[2]-p.s[2]/2)*850,850-high*850,p.s[2]*850,(high-low)*850);}
+c+=l(105,850,625,850)+d(175,883,566,883,'460 FOOT')+d(610,552.5,610,850,'350 CLEARANCE')+t(115,943,'Cut through left support: X = -752 mm.',14)+t(115,972,'34 mm foot / 35 mm upright / 25 mm rear plate.',14);
+c+=l(323,478,180,380)+t(100,365,'REAR FIXING',13)+l(390,399,510,338)+t(450,319,'9 mm SKIN',13);
+c+=t(730,235,'B-B / WINDOW PERIMETER',19)+r(845,370,85*2.5,55*2.5)+d(845,538,1057.5,538,'85 DEPTH')+d(1085,370,1085,507.5,'55')+t(730,601,'Profile shown at 2.5 px/mm.',14)+t(730,632,'Interior mullion: 35 x 60 mm.',14)+t(730,663,'Rounded steel edges: R3 / R4 mm.',14);
+c+=t(1225,235,'C-C / HOLLOW CERAMIC VESSEL',19);
+const profile=[[0,0],[.13,0],[.16,.025],[.19,.18],[.18,.35],[.145,.46],[.127,.46],[.162,.35],[.172,.18],[.142,.04],[0,.04]];
+for(const mirror of [-1,1])c+=`<path d="${profile.map(([x,y],i)=>`${i?'L':'M'}${1480+mirror*x*1000} ${820-y*1000}`).join(' ')} Z" fill="url(#hatch)" stroke="#273a31"/>`;
+c+=d(1290,860,1670,860,'380 MAX DIAMETER')+d(1700,360,1700,820,'460')+l(1608,377,1670,300)+t(1530,284,'18 mm WALL',13)+t(1260,939,'Open rim; continuous inner wall and 40 mm base.',13)+t(1260,970,'The interior is geometry, visible from above.',13);
+c+=l(65,1085,1735,1085)+t(65,1125,'CHECK: no unsupported gaps / no duplicate coplanar faces / rounded exposed edges / actual hollow profile',14);
+const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1180"><defs><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#e2e6d8"/><path d="M-2 8L8-2M6 10L10 6" stroke="#bac6b4" stroke-width="1"/></pattern></defs><rect width="1800" height="1180" fill="#f7f6f0"/>${c}</svg>`;
+await fs.writeFile('assets/design/model-sheets/sections.svg',svg);await sharp(Buffer.from(svg)).png().toFile('assets/design/model-sheets/sections.png');
+console.log('Canvas, window and hollow vessel sections saved.');

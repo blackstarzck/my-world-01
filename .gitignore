@@ -1,0 +1,13 @@
+node_modules/
+dist/
+artifacts/
+*.tsbuildinfo
+*.log
+.DS_Store
+*.blend[0-9]*
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+!.env.*.example

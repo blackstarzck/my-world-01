@@ -1,0 +1,665 @@
+{
+  "revision": "C",
+  "units": "metres",
+  "axes": "x = width, y = height, z = depth; front = +z",
+  "assets": [
+    {
+      "id": "canvas",
+      "name": "Freestanding canvas assembly",
+      "size": [
+        2.35,
+        3.45,
+        0.46
+      ],
+      "material": "Linen / oak stretcher / graphite steel",
+      "parts": [
+        {
+          "name": "Front linen skin",
+          "p": [
+            0,
+            1.9,
+            0.023
+          ],
+          "s": [
+            2.35,
+            3.1,
+            0.009
+          ],
+          "material": "canvas",
+          "bevel": 0.003
+        },
+        {
+          "name": "Left wrapped edge",
+          "p": [
+            -1.1525,
+            1.9,
+            0
+          ],
+          "s": [
+            0.045,
+            3.1,
+            0.055
+          ],
+          "material": "canvas",
+          "bevel": 0.004
+        },
+        {
+          "name": "Right wrapped edge",
+          "p": [
+            1.1525,
+            1.9,
+            0
+          ],
+          "s": [
+            0.045,
+            3.1,
+            0.055
+          ],
+          "material": "canvas",
+          "bevel": 0.004
+        },
+        {
+          "name": "Top wrapped edge",
+          "p": [
+            0,
+            3.4275,
+            0
+          ],
+          "s": [
+            2.26,
+            0.045,
+            0.055
+          ],
+          "material": "canvas",
+          "bevel": 0.004
+        },
+        {
+          "name": "Bottom wrapped edge",
+          "p": [
+            0,
+            0.3725,
+            0
+          ],
+          "s": [
+            2.26,
+            0.045,
+            0.055
+          ],
+          "material": "canvas",
+          "bevel": 0.004
+        },
+        {
+          "name": "Rear cross brace",
+          "p": [
+            0,
+            1.9,
+            -0.014
+          ],
+          "s": [
+            2.26,
+            0.055,
+            0.024
+          ],
+          "material": "wood",
+          "bevel": 0.002
+        },
+        {
+          "name": "Left upright",
+          "p": [
+            -0.752,
+            0.262,
+            -0.047
+          ],
+          "s": [
+            0.035,
+            0.456,
+            0.035
+          ],
+          "material": "steel",
+          "bevel": 0.003
+        },
+        {
+          "name": "Right upright",
+          "p": [
+            0.752,
+            0.262,
+            -0.047
+          ],
+          "s": [
+            0.035,
+            0.456,
+            0.035
+          ],
+          "material": "steel",
+          "bevel": 0.003
+        },
+        {
+          "name": "Left foot",
+          "p": [
+            -0.752,
+            0.017,
+            0
+          ],
+          "s": [
+            0.34,
+            0.034,
+            0.46
+          ],
+          "material": "steel",
+          "bevel": 0.006
+        },
+        {
+          "name": "Right foot",
+          "p": [
+            0.752,
+            0.017,
+            0
+          ],
+          "s": [
+            0.34,
+            0.034,
+            0.46
+          ],
+          "material": "steel",
+          "bevel": 0.006
+        },
+        {
+          "name": "Left rear fixing",
+          "p": [
+            -0.752,
+            0.44,
+            -0.03
+          ],
+          "s": [
+            0.11,
+            0.15,
+            0.025
+          ],
+          "material": "steel",
+          "bevel": 0.002
+        },
+        {
+          "name": "Right rear fixing",
+          "p": [
+            0.752,
+            0.44,
+            -0.03
+          ],
+          "s": [
+            0.11,
+            0.15,
+            0.025
+          ],
+          "material": "steel",
+          "bevel": 0.002
+        }
+      ],
+      "notes": [
+        "Canvas: 2350 W x 3100 H x 55 D mm; bottom at 350 mm.",
+        "Back remains open. Linen skin is 9 mm; rear frame is 45 mm.",
+        "Feet: 340 x 460 x 34 mm. Edge radius: 6 mm.",
+        "Side-row version: 2150 x 2800 mm; same 350 mm floor clearance."
+      ]
+    },
+    {
+      "id": "window",
+      "name": "Industrial window bay",
+      "size": [
+        3.1,
+        7.2,
+        0.43
+      ],
+      "material": "Graphite steel / pale mineral sill",
+      "parts": [
+        {
+          "name": "Left perimeter",
+          "p": [
+            -1.5225,
+            3.6,
+            0
+          ],
+          "s": [
+            0.055,
+            7.2,
+            0.085
+          ],
+          "material": "steel",
+          "bevel": 0.004
+        },
+        {
+          "name": "Right perimeter",
+          "p": [
+            1.5225,
+            3.6,
+            0
+          ],
+          "s": [
+            0.055,
+            7.2,
+            0.085
+          ],
+          "material": "steel",
+          "bevel": 0.004
+        },
+        {
+          "name": "Head",
+          "p": [
+            0,
+            7.1725,
+            0
+          ],
+          "s": [
+            2.99,
+            0.055,
+            0.085
+          ],
+          "material": "steel",
+          "bevel": 0.004
+        },
+        {
+          "name": "Base",
+          "p": [
+            0,
+            0.0275,
+            0
+          ],
+          "s": [
+            2.99,
+            0.055,
+            0.085
+          ],
+          "material": "steel",
+          "bevel": 0.004
+        },
+        {
+          "name": "Mullion left",
+          "p": [
+            -0.5166666666666667,
+            3.6,
+            0
+          ],
+          "s": [
+            0.035,
+            7.09,
+            0.06
+          ],
+          "material": "steel",
+          "bevel": 0.003
+        },
+        {
+          "name": "Mullion right",
+          "p": [
+            0.5166666666666667,
+            3.6,
+            0
+          ],
+          "s": [
+            0.035,
+            7.09,
+            0.06
+          ],
+          "material": "steel",
+          "bevel": 0.003
+        },
+        {
+          "name": "Transom 1",
+          "p": [
+            0,
+            1.2,
+            0.002
+          ],
+          "s": [
+            2.99,
+            0.035,
+            0.06
+          ],
+          "material": "steel",
+          "bevel": 0.003
+        },
+        {
+          "name": "Transom 2",
+          "p": [
+            0,
+            2.4,
+            0.002
+          ],
+          "s": [
+            2.99,
+            0.035,
+            0.06
+          ],
+          "material": "steel",
+          "bevel": 0.003
+        },
+        {
+          "name": "Transom 3",
+          "p": [
+            0,
+            3.5999999999999996,
+            0.002
+          ],
+          "s": [
+            2.99,
+            0.035,
+            0.06
+          ],
+          "material": "steel",
+          "bevel": 0.003
+        },
+        {
+          "name": "Transom 4",
+          "p": [
+            0,
+            4.8,
+            0.002
+          ],
+          "s": [
+            2.99,
+            0.035,
+            0.06
+          ],
+          "material": "steel",
+          "bevel": 0.003
+        },
+        {
+          "name": "Transom 5",
+          "p": [
+            0,
+            6,
+            0.002
+          ],
+          "s": [
+            2.99,
+            0.035,
+            0.06
+          ],
+          "material": "steel",
+          "bevel": 0.003
+        },
+        {
+          "name": "Mineral sill",
+          "p": [
+            0,
+            -0.045,
+            0.09
+          ],
+          "s": [
+            3.16,
+            0.09,
+            0.43
+          ],
+          "material": "stone",
+          "bevel": 0.012
+        }
+      ],
+      "notes": [
+        "Bay: 3100 W x 7200 H mm; sill at 1200 mm.",
+        "Perimeter: 55 x 85 mm; mullions: 35 x 60 mm.",
+        "Three columns / six rows; 18 daylight openings.",
+        "Six bays at 3300 mm centres; head at 8400 mm."
+      ]
+    },
+    {
+      "id": "chair",
+      "name": "Oak gallery chair",
+      "size": [
+        0.5,
+        0.81,
+        0.4655
+      ],
+      "material": "Oiled oak / olive woven seat",
+      "parts": [
+        {
+          "name": "Seat",
+          "p": [
+            0,
+            0.445,
+            0
+          ],
+          "s": [
+            0.5,
+            0.07,
+            0.46
+          ],
+          "material": "olive",
+          "bevel": 0.032
+        },
+        {
+          "name": "Seat rail front",
+          "p": [
+            0,
+            0.395,
+            0.195
+          ],
+          "s": [
+            0.45,
+            0.045,
+            0.035
+          ],
+          "material": "wood",
+          "bevel": 0.007
+        },
+        {
+          "name": "Seat rail rear",
+          "p": [
+            0,
+            0.395,
+            -0.195
+          ],
+          "s": [
+            0.45,
+            0.045,
+            0.035
+          ],
+          "material": "wood",
+          "bevel": 0.007
+        },
+        {
+          "name": "Left side rail",
+          "p": [
+            -0.215,
+            0.395,
+            0
+          ],
+          "s": [
+            0.035,
+            0.045,
+            0.36
+          ],
+          "material": "wood",
+          "bevel": 0.007
+        },
+        {
+          "name": "Right side rail",
+          "p": [
+            0.215,
+            0.395,
+            0
+          ],
+          "s": [
+            0.035,
+            0.045,
+            0.36
+          ],
+          "material": "wood",
+          "bevel": 0.007
+        },
+        {
+          "name": "Left front leg",
+          "p": [
+            -0.21,
+            0.1975,
+            0.17
+          ],
+          "s": [
+            0.035,
+            0.395,
+            0.035
+          ],
+          "material": "wood",
+          "bevel": 0.009
+        },
+        {
+          "name": "Right front leg",
+          "p": [
+            0.21,
+            0.1975,
+            0.17
+          ],
+          "s": [
+            0.035,
+            0.395,
+            0.035
+          ],
+          "material": "wood",
+          "bevel": 0.009
+        },
+        {
+          "name": "Left rear leg / stile",
+          "p": [
+            -0.21,
+            0.405,
+            -0.21
+          ],
+          "s": [
+            0.035,
+            0.81,
+            0.035
+          ],
+          "material": "wood",
+          "bevel": 0.009
+        },
+        {
+          "name": "Right rear leg / stile",
+          "p": [
+            0.21,
+            0.405,
+            -0.21
+          ],
+          "s": [
+            0.035,
+            0.81,
+            0.035
+          ],
+          "material": "wood",
+          "bevel": 0.009
+        },
+        {
+          "name": "Backrest",
+          "p": [
+            0,
+            0.735,
+            -0.218
+          ],
+          "s": [
+            0.49,
+            0.15,
+            0.035
+          ],
+          "material": "wood",
+          "bevel": 0.016
+        }
+      ],
+      "notes": [
+        "Seat top 480 mm. Backrest top 810 mm.",
+        "Seat corner radius 32 mm; oak leg radius 9 mm.",
+        "Rear legs continue into stiles. All rails meet legs.",
+        "Oak grain follows the long direction of each part."
+      ]
+    },
+    {
+      "id": "bench",
+      "name": "Mineral bench",
+      "size": [
+        2,
+        0.48,
+        0.55
+      ],
+      "material": "Olive woven upholstery / travertine",
+      "parts": [
+        {
+          "name": "Upholstered seat",
+          "p": [
+            0,
+            0.4,
+            0
+          ],
+          "s": [
+            2,
+            0.16,
+            0.55
+          ],
+          "material": "olive",
+          "bevel": 0.07
+        },
+        {
+          "name": "Left stone support",
+          "p": [
+            -0.8,
+            0.16,
+            0
+          ],
+          "s": [
+            0.18,
+            0.32,
+            0.48
+          ],
+          "material": "stone",
+          "bevel": 0.015
+        },
+        {
+          "name": "Right stone support",
+          "p": [
+            0.8,
+            0.16,
+            0
+          ],
+          "s": [
+            0.18,
+            0.32,
+            0.48
+          ],
+          "material": "stone",
+          "bevel": 0.015
+        }
+      ],
+      "notes": [
+        "2000 W x 550 D x 480 H mm.",
+        "160 mm cushion; 320 mm supports; no floor gap.",
+        "Fabric detail uses material texture, not excessive geometry."
+      ]
+    },
+    {
+      "id": "plinth",
+      "name": "Stone display plinth",
+      "size": [
+        0.7,
+        0.85,
+        0.7
+      ],
+      "material": "Honed limestone",
+      "parts": [
+        {
+          "name": "Plinth body",
+          "p": [
+            0,
+            0.425,
+            0
+          ],
+          "s": [
+            0.7,
+            0.85,
+            0.7
+          ],
+          "material": "stone",
+          "bevel": 0.008
+        }
+      ],
+      "notes": [
+        "700 W x 700 D x 850 H mm. Edge radius 8 mm.",
+        "Vessel is a separate hollow object, not a painted black disk.",
+        "Vessel: diameter 380 mm, height 460 mm, wall 18 mm."
+      ]
+    }
+  ]
+}

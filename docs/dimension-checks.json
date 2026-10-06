@@ -1,0 +1,58 @@
+[
+  {
+    "room": 1,
+    "part": "wall height",
+    "design_m": 12,
+    "actual_m": 12.0,
+    "pass": true
+  },
+  {
+    "room": 2,
+    "part": "wall height",
+    "design_m": 12,
+    "actual_m": 12.0,
+    "pass": true
+  },
+  {
+    "room": 3,
+    "part": "wall height",
+    "design_m": 12,
+    "actual_m": 12.0,
+    "pass": true
+  },
+  {
+    "room": 4,
+    "part": "wall height",
+    "design_m": 12,
+    "actual_m": 12.0,
+    "pass": true
+  },
+  {
+    "room": 5,
+    "part": "wall height",
+    "design_m": 12,
+    "actual_m": 12.0,
+    "pass": true
+  },
+  {
+    "room": 6,
+    "part": "wall height",
+    "design_m": 12,
+    "actual_m": 12.0,
+    "pass": true
+  },
+  {
+    "room": 7,
+    "part": "wall height",
+    "design_m": 12,
+    "actual_m": 12.0,
+    "pass": true
+  },
+  {
+    "room": 8,
+    "part": "wall height",
+    "design_m": 12,
+    "actual_m": 12.0,
+    "pass": true
+  }
+]

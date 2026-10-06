@@ -1,0 +1,161 @@
+{
+  "revision": "D-open",
+  "reopenedFinalSource": true,
+  "packedBakes": [
+    "Room_01_clean.png",
+    "Room_02_clean.png",
+    "Room_03_clean.png",
+    "Room_04_clean.png",
+    "Room_05_clean.png",
+    "Room_06_clean.png",
+    "Room_07_clean.png",
+    "Room_08_clean.png",
+    "Promenade_clean.png",
+    "Court_clean.png"
+  ],
+  "entranceScreens": 0,
+  "roomBounds": [
+    {
+      "room": 1,
+      "actual": [
+        15.0,
+        15.0,
+        12.0
+      ],
+      "expected": [
+        15,
+        15,
+        12
+      ],
+      "tolerance_m": 0.003,
+      "maxDeviation_m": 0.0,
+      "pass": true
+    },
+    {
+      "room": 2,
+      "actual": [
+        16.0,
+        15.002405166625977,
+        12.0
+      ],
+      "expected": [
+        16,
+        15,
+        12
+      ],
+      "tolerance_m": 0.003,
+      "maxDeviation_m": 0.0024051666259765625,
+      "pass": true
+    },
+    {
+      "room": 3,
+      "actual": [
+        15.0,
+        15.0,
+        12.0
+      ],
+      "expected": [
+        15,
+        15,
+        12
+      ],
+      "tolerance_m": 0.003,
+      "maxDeviation_m": 0.0,
+      "pass": true
+    },
+    {
+      "room": 4,
+      "actual": [
+        15.002405166625977,
+        16.0,
+        12.0
+      ],
+      "expected": [
+        15,
+        16,
+        12
+      ],
+      "tolerance_m": 0.003,
+      "maxDeviation_m": 0.0024051666259765625,
+      "pass": true
+    },
+    {
+      "room": 5,
+      "actual": [
+        15.0,
+        15.0,
+        12.0
+      ],
+      "expected": [
+        15,
+        15,
+        12
+      ],
+      "tolerance_m": 0.003,
+      "maxDeviation_m": 0.0,
+      "pass": true
+    },
+    {
+      "room": 6,
+      "actual": [
+        16.0,
+        15.0,
+        12.0
+      ],
+      "expected": [
+        16,
+        15,
+        12
+      ],
+      "tolerance_m": 0.003,
+      "maxDeviation_m": 0.0,
+      "pass": true
+    },
+    {
+      "room": 7,
+      "actual": [
+        15.0,
+        15.0,
+        12.0
+      ],
+      "expected": [
+        15,
+        15,
+        12
+      ],
+      "tolerance_m": 0.003,
+      "maxDeviation_m": 0.0,
+      "pass": true
+    },
+    {
+      "room": 8,
+      "actual": [
+        15.002405166625977,
+        16.0,
+        12.0
+      ],
+      "expected": [
+        15,
+        16,
+        12
+      ],
+      "tolerance_m": 0.003,
+      "maxDeviation_m": 0.0024051666259765625,
+      "pass": true
+    }
+  ],
+  "cameraMatchesLayout": true,
+  "editableMeshParts": 209,
+  "partsPerGroup": {
+    "Room_01": 19,
+    "Room_02": 19,
+    "Room_03": 19,
+    "Room_04": 19,
+    "Room_05": 19,
+    "Room_06": 19,
+    "Room_07": 19,
+    "Room_08": 19,
+    "Promenade": 5,
+    "Court": 19
+  }
+}

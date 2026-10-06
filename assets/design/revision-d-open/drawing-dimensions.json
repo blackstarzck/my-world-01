@@ -1,0 +1,272 @@
+{
+  "revision": "D-open",
+  "status": "D floor plan approved for implementation; all eight entrance screens removed",
+  "units": "metres",
+  "footprint": [
+    54,
+    54
+  ],
+  "wallThickness": 0.6,
+  "galleryClearHeight": 12,
+  "circulationClearWidth": 4,
+  "circulationClearHeight": 4.2,
+  "portalClearSize": [
+    3.2,
+    3.6
+  ],
+  "court": [
+    16,
+    16,
+    14
+  ],
+  "artworkExample": [
+    4.5,
+    6,
+    0.12
+  ],
+  "artworkBottom": 0.65,
+  "plinth": [
+    6,
+    1.6,
+    0.45
+  ],
+  "screen": null,
+  "rooms": [
+    {
+      "id": 1,
+      "b": [
+        -27,
+        -27,
+        15,
+        15
+      ],
+      "art": [
+        -24.7,
+        -19.5,
+        "v"
+      ],
+      "door": [
+        -12,
+        -14.8,
+        "v"
+      ],
+      "clearSize": [
+        13.8,
+        13.8,
+        12
+      ],
+      "screen": null
+    },
+    {
+      "id": 2,
+      "b": [
+        -8,
+        -27,
+        16,
+        15
+      ],
+      "art": [
+        0,
+        -24.7,
+        "h"
+      ],
+      "door": [
+        0,
+        -12,
+        "h"
+      ],
+      "clearSize": [
+        14.8,
+        13.8,
+        12
+      ],
+      "screen": null
+    },
+    {
+      "id": 3,
+      "b": [
+        12,
+        -27,
+        15,
+        15
+      ],
+      "art": [
+        24.7,
+        -19.5,
+        "v"
+      ],
+      "door": [
+        12,
+        -14.8,
+        "v"
+      ],
+      "clearSize": [
+        13.8,
+        13.8,
+        12
+      ],
+      "screen": null
+    },
+    {
+      "id": 4,
+      "b": [
+        12,
+        -8,
+        15,
+        16
+      ],
+      "art": [
+        24.7,
+        0,
+        "v"
+      ],
+      "door": [
+        12,
+        0,
+        "v"
+      ],
+      "clearSize": [
+        13.8,
+        14.8,
+        12
+      ],
+      "screen": null
+    },
+    {
+      "id": 5,
+      "b": [
+        12,
+        12,
+        15,
+        15
+      ],
+      "art": [
+        24.7,
+        19.5,
+        "v"
+      ],
+      "door": [
+        12,
+        14.8,
+        "v"
+      ],
+      "clearSize": [
+        13.8,
+        13.8,
+        12
+      ],
+      "screen": null
+    },
+    {
+      "id": 6,
+      "b": [
+        -8,
+        12,
+        16,
+        15
+      ],
+      "art": [
+        0,
+        24.7,
+        "h"
+      ],
+      "door": [
+        0,
+        12,
+        "h"
+      ],
+      "clearSize": [
+        14.8,
+        13.8,
+        12
+      ],
+      "screen": null
+    },
+    {
+      "id": 7,
+      "b": [
+        -27,
+        12,
+        15,
+        15
+      ],
+      "art": [
+        -24.7,
+        19.5,
+        "v"
+      ],
+      "door": [
+        -12,
+        14.8,
+        "v"
+      ],
+      "clearSize": [
+        13.8,
+        13.8,
+        12
+      ],
+      "screen": null
+    },
+    {
+      "id": 8,
+      "b": [
+        -27,
+        -8,
+        15,
+        16
+      ],
+      "art": [
+        -24.7,
+        0,
+        "v"
+      ],
+      "door": [
+        -12,
+        0,
+        "v"
+      ],
+      "clearSize": [
+        13.8,
+        14.8,
+        12
+      ],
+      "screen": null
+    }
+  ],
+  "typicalRoom": {
+    "outerSize": [
+      16,
+      15
+    ],
+    "innerSize": [
+      14.8,
+      13.8
+    ],
+    "artCentre": [
+      0,
+      -5.2,
+      3.65
+    ],
+    "portal": [
+      0,
+      7.5
+    ],
+    "screen": [
+      0,
+      3.6
+    ],
+    "mainViewingPoint": [
+      0,
+      2.3
+    ],
+    "mainViewingDistance": 7.5,
+    "rooflight": [
+      6,
+      2
+    ],
+    "rooflightCentre": [
+      0,
+      -2.8
+    ]
+  }
+}

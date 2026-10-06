@@ -1,0 +1,44 @@
+import fs from 'node:fs/promises';
+import sharp from 'sharp';
+const L=JSON.parse(await fs.readFile('src/data/layout.json','utf8'));
+const {width:W,depth:D,height:H}=L.room,A=L.architecture;
+const text=(x,y,t,size=16)=>`<text x="${x}" y="${y}" font-family="Arial" font-size="${size}" fill="#263b33">${t}</text>`;
+const rect=(x,y,w,h,fill='none',stroke='#61766c')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}"/>`;
+const line=(x,y,X,Y,color='#75887d',dash='')=>`<path d="M${x},${y}L${X},${Y}" stroke="${color}" fill="none" ${dash?'stroke-dasharray="4 5"':''}/>`;
+const dim=(x,y,X,Y,label)=>line(x,y,X,Y)+line(x-5,y-5,x+5,y+5)+line(X-5,Y-5,X+5,Y+5)+text((x+X)/2+8,(y+Y)/2-9,label,14);
+const sx=x=>850+x*32,sz=z=>620+z*32;
+async function save(name,title,sub,body){const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100"><rect width="1600" height="1100" fill="#f5f3eb"/>${text(60,65,'STILL / GRAND HALL / REVISION C',18)}${text(60,119,title,34)}${text(60,158,sub,16)}${line(60,185,1540,185)}${body}${line(60,1018,1540,1018)}${text(60,1052,`COORDINATED MODEL REFERENCE / ${W} x ${D} x ${H} m / All dimensions in metres`,14)}</svg>`;await fs.writeFile(`assets/design/${name}.svg`,svg);await sharp(Buffer.from(svg)).png().toFile(`assets/design/${name}.png`);}
+let plan=rect(sx(-W/2),sz(-D/2),W*32,D*32,'#e6e7df');
+for(let x=-12;x<=12;x+=4)plan+=line(sx(x),sz(-D/2),sx(x),sz(D/2),'#ccd2c6');
+for(let z=-8;z<=8;z+=4)plan+=line(sx(-W/2),sz(z),sx(W/2),sz(z),'#ccd2c6');
+for(const [x,z] of L.columns)plan+=rect(sx(x)-12.8,sz(z)-12.8,25.6,25.6,'#7a8a79');
+for(const z of A.windowCenters)plan+=rect(sx(-W/2)-3,sz(z)-3.1*16,6,3.1*32,'#4a6659');
+for(const [i,a] of L.artworks.entries())plan+=`<g transform="translate(${sx(a.position[0])} ${sz(a.position[2])}) rotate(${-a.rotation*180/Math.PI})">${rect(-a.width*16,-2,a.width*32,4,'#bb6848')}${line(0,0,0,20,'#bb6848')}</g>`+text(sx(a.position[0])+12,sz(a.position[2])-12,`${i+1} / ${a.id}`,12);
+for(const p of L.props)plan+=rect(sx(p.position[0])-16,sz(p.position[2])-8,32,16,'#a5b193');
+plan+=dim(sx(-W/2),sz(-D/2)-30,sx(W/2),sz(-D/2)-30,`${W}.00 m`)+dim(sx(W/2)+30,sz(-D/2),sx(W/2)+30,sz(D/2),`${D}.00 m`);
+plan+=text(60,300,'MEASURED PLAN / 32 px per m',17)+text(60,345,'520 m2 exhibition floor',17)+text(60,378,'Six structural columns / 0.80 m',17)+text(60,411,'Art spacing / 5.20 m centres',17)+text(60,444,'Windows / 3.10 W x 7.20 H',17)+text(60,477,'Window sill / +1.20 m',17)+text(60,510,'Window head / +8.40 m',17)+text(60,570,'Canvas size is unchanged.',17)+text(60,601,'More space around each exhibit.',17);
+await save('01-measured-floor-plan','A grand hall, with room to breathe.','Shared coordinates for the architecture, exhibits and camera.',plan);
+let section='';const ex=x=>530+x*30,ey=y=>570-y*30;
+section+=rect(ex(-13),ey(H),W*30,H*30,'#e6e3d8');
+for(const x of [-9.5,9.5])section+=rect(ex(x-.4),ey(H-.6),.8*30,(H-.6)*30,'#b9beaf');
+section+=rect(ex(-13),ey(H),W*30,.76*30,'#a9b4a3');
+for(const a of L.artworks.slice(0,4))section+=rect(ex(a.position[0]-a.width/2),ey(a.position[1]+a.height/2),a.width*30,a.height*30,'#c67752');
+section+=dim(ex(-13)-25,ey(H),ex(-13)-25,ey(0),`${H.toFixed(2)} m`)+dim(ex(-13),595,ex(13),595,'26.00 m');
+section+=text(160,227,'FRONT / 30 px per m',17)+text(1100,265,'STRUCTURAL SCHEDULE',20)+text(1100,308,'Roof slab / 240 mm',17)+text(1100,343,'Cross beam / 580 x 760 mm',17)+text(1100,378,'Column / 800 x 800 mm',17)+text(1100,413,'Capital / 1300 x 380 mm',17)+text(1100,448,'Floor slab / 240 mm',17)+text(1100,483,'Rooflight / 6000 x 4000 mm',17);
+const px=z=>550+z*30,py=y=>975-y*30;
+section+=rect(px(-10),py(H),D*30,H*30,'#e6e3d8');
+for(const z of A.windowCenters){section+=rect(px(z-1.55),py(8.4),3.1*30,7.2*30,'#c4d4cf');for(let k=1;k<6;k++)section+=line(px(z-1.55),py(1.2+k*1.2),px(z+1.55),py(1.2+k*1.2));for(const off of [-3.1/6,3.1/6])section+=line(px(z+off),py(1.2),px(z+off),py(8.4));}
+section+=text(950,705,'LONGITUDINAL WINDOW ELEVATION',19)+text(950,751,'Six bays / 3.30 m centres',17)+text(950,787,'Clear window top +8.40 m',17)+text(950,823,'Floor to roof underside +10.50 m',17)+text(950,877,'Original ceiling +5.50 m shown dashed',16)+line(px(-10),py(5.5),px(10),py(5.5),'#bd7251','dash');
+await save('02-elevations-section','Twice the height. A new sense of scale.','Orthographic elevations / same 30 px per metre / heights from finished floor.',section);
+let routes=plan;
+for(const a of L.artworks)for(const mobile of [false,true]){const d=a.height/(2*Math.tan(58*Math.PI/360)*(mobile?.55:.69)),x=a.position[0]+Math.sin(a.rotation)*d,z=a.position[2]+Math.cos(a.rotation)*d;routes+=line(sx(L.safeHub[0]),sz(L.safeHub[2]),sx(x),sz(z),mobile?'#91a395':'#b46243','dash')+`<circle cx="${sx(x)}" cy="${sz(z)}" r="${mobile?3:5}" fill="${mobile?'#91a395':'#b46243'}"/>`;}
+routes+=line(sx(L.overview.position[0]),sz(L.overview.position[2]),sx(L.safeHub[0]),sz(L.safeHub[2]),'#344f3b','dash')+text(sx(L.overview.position[0])+12,sz(L.overview.position[2]),'ENTRY +3.10 m',14)+text(60,685,'Orange / desktop focus',16)+text(60,719,'Green / mobile focus',16)+text(60,753,'Camera target / +3.60 m',16);
+await save('04-camera-routes','See the architecture. Approach the work.','Entry view includes the elevated ceiling; detail views retain original artwork scale.',routes);
+let roof=rect(sx(-13),sz(-10),26*32,20*32,'#e5e4d9');
+for(const z of A.skylights)roof+=rect(sx(-3),sz(z-2),6*32,4*32,'#c1d9d1');
+for(const z of A.crossBeams)roof+=rect(sx(-13),sz(z-.29),26*32,.58*32,'#a8b5a2');
+for(const x of [-9.5,-3.25,3.25,9.5])roof+=rect(sx(x-.25),sz(-10),.5*32,20*32,'#a8b5a2');
+for(const z of A.skylights)roof+=text(sx(-2.2),sz(z)+30,'6.00 x 4.00',15);
+roof+=text(60,305,'REFLECTED CEILING PLAN',18)+text(60,350,'Three open rooflights',17)+text(60,385,'Deep mineral reveals / 640 mm',17)+text(60,420,'Raised glazing plane / +11.16 m',17)+text(60,455,'Rooflight wash / +11.50 m',17)+text(60,515,'Narrow steel glazing bars',17)+text(60,550,'0.76 m deep structural rhythm',17)+dim(sx(-3),sz(-7.5)-20,sx(3),sz(-7.5)-20,'6.00 m');
+await save('06-reflected-ceiling-plan','Daylight from above.','Modeling reference / genuine roof apertures / separate ribs, reveals and glazing bars.',roof);
+console.log('Grand hall coordinated plans, sections, ceiling and camera sheets created.');

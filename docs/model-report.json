@@ -1,0 +1,74 @@
+{
+  "revision": "D-open",
+  "rooms": 8,
+  "entranceScreens": 0,
+  "bakeResolution": 2048,
+  "meshes": [
+    {
+      "name": "Room_01",
+      "vertices": 3712,
+      "faces": 3008,
+      "uvLayers": 1
+    },
+    {
+      "name": "Room_02",
+      "vertices": 4320,
+      "faces": 3464,
+      "uvLayers": 1
+    },
+    {
+      "name": "Room_03",
+      "vertices": 4256,
+      "faces": 3400,
+      "uvLayers": 1
+    },
+    {
+      "name": "Room_04",
+      "vertices": 3576,
+      "faces": 2898,
+      "uvLayers": 1
+    },
+    {
+      "name": "Room_05",
+      "vertices": 4248,
+      "faces": 3410,
+      "uvLayers": 1
+    },
+    {
+      "name": "Room_06",
+      "vertices": 3480,
+      "faces": 2834,
+      "uvLayers": 1
+    },
+    {
+      "name": "Room_07",
+      "vertices": 5800,
+      "faces": 4558,
+      "uvLayers": 1
+    },
+    {
+      "name": "Room_08",
+      "vertices": 4600,
+      "faces": 3666,
+      "uvLayers": 1
+    },
+    {
+      "name": "Promenade",
+      "vertices": 88,
+      "faces": 110,
+      "uvLayers": 1
+    },
+    {
+      "name": "Court",
+      "vertices": 1016,
+      "faces": 980,
+      "uvLayers": 1
+    },
+    {
+      "name": "Daylight",
+      "vertices": 72,
+      "faces": 54,
+      "uvLayers": 1
+    }
+  ]
+}
