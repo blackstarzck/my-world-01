@@ -7,7 +7,8 @@ function direction(position,target){
  const [x,y,z]=target.map((v,i)=>v-position[i]);
  return {yaw:Math.atan2(x,z),pitch:Math.atan2(y,Math.hypot(x,z))};
 }
-const TURN_RATE=1.55,TRAVEL_SPEED=8;
+// Short, responsive trips: accelerate promptly and ease only near the artwork.
+const TURN_RATE=3.4,TRAVEL_SPEED=22,ACCELERATION=36;
 
 // Rotate directions rather than interpolating world-space look-at points: a
 // target passing through the camera caused the previous sudden 180° flips.
@@ -17,7 +18,7 @@ export function createCameraMotion(points,fromTarget,toTarget,fromFov,toFov,retu
  function addTurn(position,angles,fov){
   const prev=keys.at(-1),yaw=angleNear(angles.yaw,prev.yaw);
   const radians=Math.hypot(yaw-prev.yaw,angles.pitch-prev.pitch);
-  keys.push({position,yaw,pitch:angles.pitch,fov,time:prev.time+Math.max(.25,1.5*radians/TURN_RATE),turn:true});
+  keys.push({position,yaw,pitch:angles.pitch,fov,time:prev.time+Math.max(.12,1.5*radians/TURN_RATE),turn:true});
  }
  if(metrics.total<.01){addTurn(points.at(-1),end,toFov);return {keys,duration:keys.at(-1).time};}
  let reverse=0;
@@ -40,7 +41,7 @@ export function createCameraMotion(points,fromTarget,toTarget,fromFov,toFov,retu
  for(let i=1;i<distances.length;i++){
   const d=distances[i],last=distances[i-1],prev=keys.at(-1),yaw=angleNear(heading(d).yaw,prev.yaw);
   const accelerationDistance=Math.min((last+d)/2,metrics.total-(last+d)/2);
-  const speed=Math.min(TRAVEL_SPEED,Math.sqrt(16*Math.max(.03,accelerationDistance)));
+  const speed=Math.min(TRAVEL_SPEED,Math.sqrt(2*ACCELERATION*Math.max(.03,accelerationDistance)));
   const seconds=Math.max((d-last)/speed,Math.abs(yaw-prev.yaw)/TURN_RATE);
   keys.push({position:sampleRoute(points,metrics,d/metrics.total),yaw,pitch:0,fov:fromFov+(toFov-fromFov)*ease(d/metrics.total),time:prev.time+seconds,turn:false});
  }

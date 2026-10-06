@@ -35,13 +35,22 @@ test('the court reaches the northwest gallery without touring the opposite corri
 test('desktop and mobile keep the same viewing height while changing galleries',()=>{
   for(const mobile of [false,true])for(const a of layout.artworks)assert.equal(cameraPose(layout,a.id,mobile,1.04).position[1],2.3);
 });
+test('every room is reached from the court within 3.2 seconds on desktop and mobile',()=>{
+  for(const [mobile,aspect] of [[false,1.04],[true,.983]])for(const a of layout.artworks){
+    const from=layout.overview,to=cameraPose(layout,a.id,mobile,aspect);
+    const route=planRoute(layout,from.position,to.position),motion=createCameraMotion(route,from.target,to.target,from.fov,to.fov);
+    assert.ok(motion.duration<=3.2,`${a.id}: ${motion.duration.toFixed(2)} seconds`);
+    const end=sampleCameraMotion(motion,3.2);assert.ok(end.done);assert.deepEqual(end.position,to.position);
+  }
+});
+
 test('camera turns are bounded, have no last-frame snap, and follow safe rounded paths',()=>{
   for(const [fromId,toId] of [[null,'sol'],['sol','form'],['form',null],['mono','atelier']]){
     const from=cameraPose(layout,fromId,false,1.04),to=cameraPose(layout,toId,false,1.04);
     const points=planRoute(layout,from.position,to.position),motion=createCameraMotion(points,from.target,to.target,from.fov,to.fov,!toId);
     let previous=sampleCameraMotion(motion,0);
     for(let t=1/60;t<motion.duration+1/60;t+=1/60){const p=sampleCameraMotion(motion,Math.min(t,motion.duration));
-      assert.ok(Math.hypot(p.yaw-previous.yaw,p.pitch-previous.pitch)*60<1.56,'No sudden camera rotation');
+      assert.ok(Math.hypot(p.yaw-previous.yaw,p.pitch-previous.pitch)*60<3.41,'Keep turns below 3.3 degrees per frame at 60 fps');
       assert.ok(isWalkable(layout,p.position));assert.ok(clearSegment(layout,previous.position,p.position));previous=p;
     }
     assert.ok(previous.done);assert.deepEqual(previous.position,to.position);
