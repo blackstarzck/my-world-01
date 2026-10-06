@@ -2,6 +2,7 @@ import {routeMetrics,sampleRoute} from './navigation.mjs';
 
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const ease=t=>t*t*(3-2*t);
+const blend=t=>{t=clamp(t,0,1);return t*t*t*(t*(t*6-15)+10);};
 const angleNear=(angle,reference)=>reference+Math.atan2(Math.sin(angle-reference),Math.cos(angle-reference));
 function direction(position,target){
  const [x,y,z]=target.map((v,i)=>v-position[i]);
@@ -41,7 +42,7 @@ export function createCameraMotion(points,fromTarget,toTarget,fromFov,toFov,retu
  let reverse=0;
  function heading(distance){
   const a=sampleRoute(points,metrics,distance/metrics.total);
-  let b=sampleRoute(points,metrics,Math.min(1,(distance+2)/metrics.total));
+  let b=sampleRoute(points,metrics,Math.min(1,(distance+3.5)/metrics.total));
   if(metrics.total-distance<.001){const behind=sampleRoute(points,metrics,Math.max(0,(distance-1)/metrics.total));b=a.map((v,i)=>v+(v-behind[i]));}
   return {yaw:direction(a,b).yaw+reverse,pitch:0};
  }
@@ -51,19 +52,28 @@ export function createCameraMotion(points,fromTarget,toTarget,fromFov,toFov,retu
   // Returning can retrace the approach as a backwards dolly, without two U-turns.
   if(turns(Math.PI)+.4<turns(0))reverse=Math.PI;
  }
- addTurn(points[0],heading(0),fromFov);
+ // Start travelling while turning, and acquire the artwork before arriving.
+ // These windows overlap the journey instead of adding stationary turn phases.
+ const departureDistance=Math.min(metrics.total*.45,10),arrivalDistance=Math.min(metrics.total*.4,7);
  // Smooth travelled distance; sampleRoute still follows every original bend.
  // Uniform samples avoid near-duplicate keys with abrupt millisecond changes.
  const count=Math.ceil(metrics.total/.3);
  const distances=Array.from({length:count+1},(_,i)=>i*metrics.total/count);
+ let previousHeading=angleNear(heading(0).yaw,start.yaw);
+ const headings=distances.map(d=>{previousHeading=angleNear(heading(d).yaw,previousHeading);return previousHeading;});
+ const endYaw=angleNear(end.yaw,headings.at(-1));
  for(let i=1;i<distances.length;i++){
-  const d=distances[i],last=distances[i-1],prev=keys.at(-1),yaw=angleNear(heading(d).yaw,prev.yaw);
+  const d=distances[i],last=distances[i-1],prev=keys.at(-1),depart=blend(d/departureDistance),arrive=blend(1-(metrics.total-d)/arrivalDistance);
+  const travelYaw=headings[i];
+  let yaw=start.yaw+(travelYaw-start.yaw)*depart;
+  yaw=angleNear(yaw+(endYaw-yaw)*arrive,prev.yaw);
+  const pitch=start.pitch*(1-depart)*(1-arrive)+end.pitch*arrive;
   const accelerationDistance=Math.min((last+d)/2,metrics.total-(last+d)/2);
   const speed=Math.min(TRAVEL_SPEED,Math.sqrt(2*ACCELERATION*Math.max(.03,accelerationDistance)));
-  const seconds=Math.max((d-last)/speed,1.25*Math.abs(yaw-prev.yaw)/TURN_RATE);
-  keys.push({position:sampleRoute(points,metrics,d/metrics.total),distance:d,yaw,pitch:0,fov:fromFov+(toFov-fromFov)*ease(d/metrics.total),time:prev.time+seconds,turn:false});
+  const seconds=Math.max((d-last)/speed,1.5*Math.hypot(yaw-prev.yaw,pitch-prev.pitch)/TURN_RATE);
+  keys.push({position:i===count?points.at(-1):sampleRoute(points,metrics,d/metrics.total),distance:d,yaw,pitch,fov:fromFov+(toFov-fromFov)*ease(d/metrics.total),time:prev.time+seconds,turn:false});
  }
- addTurn(points.at(-1),end,toFov);
+ const stretch=Math.max(1,1.8/keys.at(-1).time);keys.forEach(key=>{key.time*=stretch;});
  return finishMotion(keys,points,metrics);
 }
 

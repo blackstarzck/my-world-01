@@ -25,6 +25,45 @@ test('an interrupted journey can reroute safely to the last selection',()=>{
   const to=cameraPose(layout,'atelier',false,1.04).position,route=planRoute(layout,layout.overview.position,to),metrics=routeMetrics(route);
   for(const t of [.08,.23,.47,.62,.84]){const from=sampleRoute(route,metrics,t),path=planRoute(layout,from,cameraPose(layout,'sol',false,1.04).position);assert.ok(path.every((p,i)=>!i||clearSegment(layout,path[i-1],p)));}
 });
+
+test('all 72 journeys sweep around corners and keep moving while turning',()=>{
+  const ids=[null,...layout.artworks.map(a=>a.id)];
+  for(const fromId of ids)for(const toId of ids){
+    if(fromId===toId)continue;
+    const label=`${fromId||'court'} → ${toId||'court'}`;
+    const from=cameraPose(layout,fromId,false,1.04),to=cameraPose(layout,toId,false,1.04);
+    const path=planRoute(layout,from.position,to.position);
+    for(let i=1;i<path.length-1;i++){
+      const u=new Vector3(...path[i]).sub(new Vector3(...path[i-1]));
+      const v=new Vector3(...path[i+1]).sub(new Vector3(...path[i]));
+      if(u.length()*v.length()<1e-8)continue;
+      const angle=u.angleTo(v),curvature=angle/((u.length()+v.length())/2);
+      assert.ok(angle<5*Math.PI/180,`${label}: abrupt direction change`);
+      assert.ok(curvature<1.15,`${label}: bend is too tight to feel like a sweep`);
+    }
+    const motion=createCameraMotion(path,from.target,to.target,from.fov,to.fov,!toId);
+    assert.ok(motion.keys.every((key,i)=>!i||key.distance>motion.keys[i-1].distance),`${label}: stationary rotation interrupts travel`);
+    for(const fps of [30,60]){
+      let previous=sampleCameraMotion(motion,0);
+      for(let t=1/fps;t<motion.duration+1/fps;t+=1/fps){
+        const pose=sampleCameraMotion(motion,Math.min(t,motion.duration));
+        assert.ok(clearSegment(layout,previous.position,pose.position),`${label}: unsafe frame chord at ${fps} fps`);
+        assert.ok(Math.hypot(pose.yaw-previous.yaw,pose.pitch-previous.pitch)*fps<3.41,`${label}: sudden camera turn`);
+        previous=pose;
+      }
+    }
+  }
+});
+
+test('a new selection inside a rounded bend can still find a safe route',()=>{
+  for(const art of layout.artworks){
+    const route=planRoute(layout,layout.overview.position,cameraPose(layout,art.id,false,1.04).position);
+    const from=route.find(p=>!isWalkable(layout,p,.7));
+    if(!from)continue;
+    const next=planRoute(layout,from,layout.overview.position);
+    assert.ok(next.every((p,i)=>!i||clearSegment(layout,next[i-1],p)),art.id);
+  }
+});
 test('the court reaches the northwest gallery without touring the opposite corridor',()=>{
   const from=layout.overview.position,to=cameraPose(layout,'sol',false,1.04).position;
   const route=planRoute(layout,from,to);

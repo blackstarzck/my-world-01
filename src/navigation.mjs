@@ -15,7 +15,9 @@ function segmentDistance(p,a,b){const v=b.map((n,i)=>n-a[i]),l=v.reduce((s,n)=>s
 export function isWalkable(layout,p,margin=.23){
   if(p[1]<.4)return false;
   for(const r of layout.rooms){const [x,y,z]=localPoint(r,p);
-    if(Math.abs(x)<1.6-margin&&Math.abs(z)<.65&&y<3.6-margin)return true;
+    // Extend the open doorway into both adjoining spaces so their clearance
+    // insets overlap even when planning a wider, more relaxed route.
+    if(Math.abs(x)<1.6-margin&&Math.abs(z)<Math.max(.65,.42+margin)&&y<3.6-margin)return true;
     if(!inside([x,z],r.local))continue;
     if(y>r.h-.3)return false;
     if(Math.abs(x-r.artLocal[0])<r.art[0]/2+margin&&Math.abs(z-r.artLocal[1])<.25+margin&&y<r.art[1]+.65+margin)return false;
@@ -30,7 +32,7 @@ export function isWalkable(layout,p,margin=.23){
   for(let x=cx-1;x<=cx+1;x++)for(let z=cz-1;z<=cz+1;z++)for(const [a,b] of index.cells.get(x+','+z)||[])if(segmentDistance(q,a,b)<=.09+margin)return false;
   return true;
 }
-export function clearSegment(layout,a,b){const n=Math.max(1,Math.ceil(dist(a,b)/.16));for(let i=0;i<=n;i++)if(!isWalkable(layout,a.map((v,k)=>v+(b[k]-v)*i/n)))return false;return true;}
+export function clearSegment(layout,a,b,margin=.23){const n=Math.max(1,Math.ceil(dist(a,b)/.08));for(let i=0;i<=n;i++)if(!isWalkable(layout,a.map((v,k)=>v+(b[k]-v)*i/n),margin))return false;return true;}
 export function cameraPose(layout,id,mobile,aspect){
   const a=layout.artworks.find(a=>a.id===id);
   if(!a)return {...layout.overview};
@@ -42,10 +44,13 @@ export function cameraPose(layout,id,mobile,aspect){
 // Keep safe graph connections, but let the open court connect to every visible
 // waypoint. Restricting endpoints to their two nearest nodes forced long detours.
 export function planRoute(layout,from,to){
-  if(clearSegment(layout,from,to))return [from,to];
+  // Leave room for broad bends. A selection made halfway around a bend may
+  // start closer to a wall, so use the already validated clearance there.
+  const clear=(a,b)=>clearSegment(layout,a,b,isWalkable(layout,a,.7)&&isWalkable(layout,b,.7)?.7:.26);
+  if(clear(from,to))return [from,to];
   const nodes=layout.navigation.nodes.map(p=>[...p]),edges=layout.navigation.edges.map(e=>[...e]);
   function attach(p){const ranked=nodes.map((v,i)=>({i,d:dist(v,p)})).sort((a,b)=>a.d-b.d);const links=[];
-    for(const c of ranked)if(clearSegment(layout,p,nodes[c.i]))links.push(c.i);
+    for(const c of ranked)if(clear(p,nodes[c.i]))links.push(c.i);
     if(!links.length)throw new Error('No safe connection to the gallery route');
     const idx=nodes.length;nodes.push([...p]);links.forEach(i=>edges.push([idx,i]));return idx;
   }
@@ -56,17 +61,24 @@ export function planRoute(layout,from,to){
   if(!Number.isFinite(costs[end]))throw new Error('Gallery route is disconnected');
   const route=[];for(let at=end;at!==-1;at=prev[at])route.unshift(nodes[at]);
   const short=[route[0]];
-  for(let i=0;i<route.length-1;){let j=route.length-1;while(j>i+1&&!clearSegment(layout,route[i],route[j]))j--;if(dist(short.at(-1),route[j])>.001)short.push(route[j]);i=j;}
+  for(let i=0;i<route.length-1;){let j=route.length-1;while(j>i+1&&!clear(route[i],route[j]))j--;if(dist(short.at(-1),route[j])>.001)short.push(route[j]);i=j;}
   return roundRoute(layout,short);
 }
 function roundRoute(layout,points){
   const result=[points[0]];
   for(let i=1;i<points.length-1;i++){
-    const a=points[i-1],b=points[i],c=points[i+1],ab=dist(a,b),bc=dist(b,c);let radius=Math.min(1.8,ab*.35,bc*.35),curve;
-    for(let attempt=0;attempt<6;attempt++,radius*=.5){
+    const a=points[i-1],b=points[i],c=points[i+1],ab=dist(a,b),bc=dist(b,c);
+    const maximum=Math.min(8,ab*.48,bc*.48);let low=0,high=maximum,curve;
+    // Spread a bend across the available space, with straight tangents and zero
+    // curvature at both ends. Fit the largest safe sweep around the actual walls.
+    for(let attempt=0;attempt<9;attempt++){
+      const radius=attempt?(low+high)/2:maximum;
       const start=b.map((v,k)=>v+(a[k]-v)*radius/ab),end=b.map((v,k)=>v+(c[k]-v)*radius/bc);
-      const candidate=Array.from({length:17},(_,j)=>{const t=j/16;return b.map((v,k)=>(1-t)**2*start[k]+2*(1-t)*t*v+t*t*end[k]);});
-      if(candidate.every((p,j)=>clearSegment(layout,j?candidate[j-1]:result.at(-1),p))){curve=candidate;break;}
+      const controls=[start,...[.32,.64].map(f=>start.map((v,k)=>v+(b[k]-a[k])*radius*f/ab)),...[.64,.32].map(f=>end.map((v,k)=>v-(c[k]-b[k])*radius*f/bc)),end];
+      const count=Math.max(24,Math.ceil(radius*2/.12));
+      const candidate=Array.from({length:count+1},(_,j)=>{const t=j/count,u=1-t,weights=[u**5,5*u**4*t,10*u**3*t*t,10*u*u*t**3,5*u*t**4,t**5];return b.map((_,k)=>controls.reduce((s,p,n)=>s+p[k]*weights[n],0));});
+      if(candidate.every((p,j)=>clearSegment(layout,j?candidate[j-1]:result.at(-1),p,.26))&&clearSegment(layout,candidate.at(-1),c,.26)){curve=candidate;low=radius;if(radius===maximum)break;}
+      else high=radius;
     }
     result.push(...(curve||[b]));
   }
