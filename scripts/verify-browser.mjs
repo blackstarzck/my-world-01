@@ -34,7 +34,13 @@ try{
  assert.ok(point,'An artwork is visible through an open gallery entrance from the court');
  await page.mouse.click(point.x,point.y);await waitScene();assert.ok(page.url().endsWith('/'+point.id));
  await page.keyboard.press('Escape');await waitScene();const restoredPosition=await page.evaluate(()=>window.__gallery.camera.position.toArray());assert.ok(savedPosition.every((n,i)=>Math.abs(n-restoredPosition[i])<.01));mark('clicking the actual 3D canvas works; closing restores the user viewpoint');
+ await page.evaluate(()=>{
+   const g=window.__gallery,origin=g.camera.position.clone(),rotation=g.camera.quaternion.clone();let started=false;
+   window.__movingCanvasSizes=[];
+   const tick=()=>{if(g.moving){started=true;if(g.camera.position.distanceTo(origin)>.001||1-Math.abs(g.camera.quaternion.dot(rotation))>.00001)window.__movingCanvasSizes.push(`${g.renderer.domElement.width}x${g.renderer.domElement.height}`);}else if(started)return;requestAnimationFrame(tick);};requestAnimationFrame(tick);
+ });
  await page.getByRole('button',{name:'01 SŌL 프로젝트 열기'}).click();await waitScene();await screenshot('verified-desktop-detail');
+ const movingSizes=await page.evaluate(()=>window.__movingCanvasSizes);assert.ok(movingSizes.length>20);assert.equal(new Set(movingSizes).size,1,'The drawing buffer must settle before the camera starts moving');mark('camera movement keeps a stable viewport without a mid-flight aspect jump');
  const names=['SŌL','FORM','AETHER','VERDANT','MONO','TIDE','OBJECTS','ATELIER'];
  for(let i=0;i<8;i++){
    assert.equal(await page.locator('#project-title').textContent(),names[i]);

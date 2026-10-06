@@ -59,6 +59,19 @@ test('camera turns are bounded, have no last-frame snap, and follow safe rounded
     if(!toId)assert.ok(motion.duration<6,'Return without rotating twice');
   }
 });
+test('camera speed and angular velocity remain continuous at motion joins',()=>{
+  for(const [mobile,aspect] of [[false,1.04],[true,.983]])for(const art of layout.artworks){
+    const from=layout.overview,to=cameraPose(layout,art.id,mobile,aspect);
+    const motion=createCameraMotion(planRoute(layout,from.position,to.position),from.target,to.target,from.fov,to.fov),h=1e-5;
+    for(const key of motion.keys.slice(1,-1)){
+      const a=sampleCameraMotion(motion,key.time-h),b=sampleCameraMotion(motion,key.time),c=sampleCameraMotion(motion,key.time+h);
+      const before=Math.hypot(...b.position.map((v,i)=>(v-a.position[i])/h)),after=Math.hypot(...c.position.map((v,i)=>(v-b.position[i])/h));
+      assert.ok(Math.abs(after-before)<.05,`${art.id}: travel speed jumps at ${key.time}`);
+      assert.ok(Math.hypot(c.yaw-2*b.yaw+a.yaw,c.pitch-2*b.pitch+a.pitch)/h<.02,`${art.id}: rotation speed jumps at ${key.time}`);
+    }
+  }
+});
+
 test('all framed artwork fits the desktop and mobile viewport with interface margins',()=>{
   for(const [mobile,aspect] of [[false,1440*.65/900],[true,390/(844*.47)],[true,320/(720*.47)]])for(const a of layout.artworks){
     const pose=cameraPose(layout,a.id,mobile,aspect),camera=new PerspectiveCamera(pose.fov,aspect,.08,300);camera.position.set(...pose.position);camera.lookAt(new Vector3(...pose.target));camera.updateMatrixWorld();

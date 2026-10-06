@@ -79,7 +79,7 @@ function CameraRig({selected,reduced,mobile,reset}:Pick<Props,'selected'|'reduce
   const saved=useRef({position:toVector(layout.overview.position),target:toVector(layout.overview.target)});
   const previous=useRef<string|null>(null);
   const initialized=useRef(false);
-  const motion=useRef<{path:ReturnType<typeof createCameraMotion>;lookTo:Vector3;start:number;immediate:boolean}|null>(null);
+  const motion=useRef<{path:ReturnType<typeof createCameraMotion>;lookTo:Vector3;start:number|null;immediate:boolean}|null>(null);
   // The overview has a fixed lens. Its closing-panel resize must not restart a trip.
   const aspect=selected?(mobile?window.innerWidth/(window.innerHeight*.47):window.innerWidth*.65/window.innerHeight):1;
   const lastReset=useRef(reset);
@@ -95,7 +95,7 @@ function CameraRig({selected,reduced,mobile,reset}:Pick<Props,'selected'|'reduce
     const position=selected?toVector(pose.position):saved.current.position.clone(),target=selected?toVector(pose.target):saved.current.target.clone();
     const points=initial?[camera.position.toArray(),position.toArray()]:planRoute(layout,camera.position.toArray(),position.toArray());
     const reframe=selected===previous.current&&!wasReset;
-    motion.current={path:createCameraMotion(points,c.target.toArray(),target.toArray(),cam.fov,pose.fov,!selected),lookTo:target,start:performance.now(),immediate:reduced||initial||reframe};
+    motion.current={path:createCameraMotion(points,c.target.toArray(),target.toArray(),cam.fov,pose.fov,!selected),lookTo:target,start:null,immediate:reduced||initial||reframe};
     c.minDistance=.1;c.maxDistance=250;c.minPolarAngle=0;c.maxPolarAngle=Math.PI;c.minAzimuthAngle=-Infinity;c.maxAzimuthAngle=Infinity;
     c.enabled=false;previous.current=selected;invalidate();
   },[selected,reduced,mobile,aspect,reset,camera,invalidate]);
@@ -105,10 +105,18 @@ function CameraRig({selected,reduced,mobile,reset}:Pick<Props,'selected'|'reduce
   },[camera,gl]);
   useFrame(()=>{
     const m=motion.current,c=controls.current;if(!m||!c)return;
+    const cam=camera as PerspectiveCamera;
+    if(m.start===null){
+      // Let the panel layout and drawing buffer agree before starting the trip.
+      // A late aspect-ratio update otherwise looks like a camera jump in flight.
+      const viewport=gl.domElement.parentElement?.getBoundingClientRect();
+      if(!m.immediate&&viewport?.height&&Math.abs(cam.aspect-viewport.width/viewport.height)>.002){invalidate();return;}
+      m.start=performance.now();
+    }
     const pose=sampleCameraMotion(m.path,m.immediate?m.path.duration:(performance.now()-m.start)/1000);
     camera.position.copy(toVector(pose.position));
     c.target.copy(camera.position).add(new Vector3(Math.sin(pose.yaw)*Math.cos(pose.pitch),Math.sin(pose.pitch),Math.cos(pose.yaw)*Math.cos(pose.pitch)).multiplyScalar(5));
-    const cam=camera as PerspectiveCamera;cam.fov=pose.fov;cam.updateProjectionMatrix();
+    cam.fov=pose.fov;cam.updateProjectionMatrix();
     if(pose.done){c.target.copy(m.lookTo);motion.current=null;c.enabled=!selected;if(!selected){c.minDistance=overviewRadius-.25;c.maxDistance=overviewRadius+.25;c.minPolarAngle=overviewPolar-.06;c.maxPolarAngle=overviewPolar+.06;c.minAzimuthAngle=overviewAzimuth-.1;c.maxAzimuthAngle=overviewAzimuth+.1;}}
     camera.lookAt(c.target);
     if(pose.done)c.update();else invalidate();
@@ -117,7 +125,7 @@ function CameraRig({selected,reduced,mobile,reset}:Pick<Props,'selected'|'reduce
 }
 
 export default function Gallery(props:Props) {
-  return <SceneBoundary onError={props.onFailure}><Canvas frameloop="demand" dpr={[1,1.5]} camera={{position:layout.overview.position as [number,number,number],fov:layout.overview.fov,near:.08,far:300}} gl={{antialias:true,alpha:false,powerPreference:'high-performance',toneMapping:NoToneMapping}} onCreated={({gl})=>{gl.setClearColor('#e4e5dd');}}>
+  return <SceneBoundary onError={props.onFailure}><Canvas frameloop="demand" resize={{debounce:0}} dpr={[1,1.5]} camera={{position:layout.overview.position as [number,number,number],fov:layout.overview.fov,near:.08,far:300}} gl={{antialias:true,alpha:false,powerPreference:'high-performance',toneMapping:NoToneMapping}} onCreated={({gl})=>{gl.setClearColor('#e4e5dd');}}>
     <Suspense fallback={null}><Building mobile={props.mobile} onReady={props.onReady}/>{projects.map((p,index)=><Artwork key={p.id} index={index} {...props}/>)}</Suspense>
     <CameraRig {...props}/><ContextGuard onFailure={props.onFailure}/>
   </Canvas></SceneBoundary>;
