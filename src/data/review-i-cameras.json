@@ -1,0 +1,1195 @@
+{
+  "sourceSchedule": "assets/design/revision-i-visual-reference-v1/camera-detail-schedule.json",
+  "sourceManifest": "output/revision-i/review-v3/review-manifest.json",
+  "sourceModelSha256": "52cb406c5528724b29c952f1f530c8691e385822293928294d143c75b30cf30e",
+  "coordinates": "Blender (x,y,z) → web (x,z,-y), including camera up vector",
+  "projection": "Horizontal sensor fit. Vertical FOV = 2 atan(sensorWidthMm / (2 lensMm aspect)).",
+  "cameras": [
+    {
+      "id": "C0-A-entry",
+      "room": "C0",
+      "purpose": "중앙 홀 입구",
+      "position": [
+        0,
+        1.649999976158142,
+        14
+      ],
+      "target": [
+        0,
+        5.6733520134553626,
+        4.845075730298131
+      ],
+      "up": [
+        0,
+        0.9154924269701868,
+        0.4023352037297221
+      ],
+      "lensMm": 20,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "C0-A-entry.png",
+      "referenceImageSha256": "b214c507d6a48c0d010412a9effd85d771d61cdbb9ad8f0a112db2922e8b661b"
+    },
+    {
+      "id": "C0-B-reverse",
+      "room": "C0",
+      "purpose": "중앙 홀 역방향",
+      "position": [
+        12,
+        1.649999976158142,
+        -6
+      ],
+      "target": [
+        3.2902707291095084,
+        4.559842719254335,
+        -2.0410315436664765
+      ],
+      "up": [
+        0.2649023299824977,
+        0.9567278359619856,
+        -0.1204101468537429
+      ],
+      "lensMm": 20,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "C0-B-reverse.png",
+      "referenceImageSha256": "986afc0d9d1db3cbdf5e5e23cbc5c22c111ee90402700d25d667a3381f71916f"
+    },
+    {
+      "id": "C0-D-ceiling",
+      "room": "C0",
+      "purpose": "중앙 돔 천장",
+      "position": [
+        0,
+        1.649999976158142,
+        0
+      ],
+      "target": [
+        8.742278750027302e-7,
+        11.649999976158064,
+        -8.742276564667706e-7
+      ],
+      "up": [
+        8.742276564667707e-8,
+        -8.742277328941893e-8,
+        -0.9999999999999925
+      ],
+      "lensMm": 16,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "C0-D-ceiling.png",
+      "referenceImageSha256": "2256818aab97930b38fbc1a9bdfe66581542e28031f3947fb73e516ccac74a71"
+    },
+    {
+      "id": "C0-E-capital",
+      "room": "C0",
+      "purpose": "중앙 홀 주두",
+      "position": [
+        9,
+        10.25,
+        -1.100000023841858
+      ],
+      "target": [
+        12.071678682818309,
+        10.250000799922974,
+        -10.61655350025962
+      ],
+      "up": [
+        7.711647376229536e-9,
+        0.9999999999999964,
+        8.654505834204684e-8
+      ],
+      "lensMm": 42,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "C0-E-capital.png",
+      "referenceImageSha256": "1549366652e390482a09bb010547ff5506913c7336a98d57b0ae14157c2bd3b1"
+    },
+    {
+      "id": "R1-A-entry",
+      "room": "R1",
+      "purpose": "입구에서 긴 공간과 천장 반복",
+      "position": [
+        -13.010765075683594,
+        1.649999976158142,
+        13.010765075683594
+      ],
+      "target": [
+        -19.909678227447735,
+        3.843171226706734,
+        19.909677829892246
+      ],
+      "up": [
+        0.15508062866996997,
+        0.9756536263744786,
+        -0.1550806240432887
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R1-A-entry.png",
+      "referenceImageSha256": "71f6018714db610913642e9a1c7cf6330e6462d9a01d6564d2a02d657928d265"
+    },
+    {
+      "id": "R1-B-reverse",
+      "room": "R1",
+      "purpose": "반대 방향에서 C0 홀 연결",
+      "position": [
+        -37.405948638916016,
+        1.649999976158142,
+        35.708892822265625
+      ],
+      "target": [
+        -30.13581307090258,
+        3.0608716566404577,
+        28.989177804207273
+      ],
+      "up": [
+        -0.1036086680185489,
+        0.9899971772748295,
+        0.09576446574430464
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R1-B-reverse.png",
+      "referenceImageSha256": "7a63605d06120b9468281649ca663daf7c284ff2d5dfc76d53a3f65f41f98ece"
+    },
+    {
+      "id": "R1-C-wall",
+      "room": "R1",
+      "purpose": "작품 구간 정면; 높은 검사용 카메라",
+      "position": [
+        -25.95081901550293,
+        5.400000095367432,
+        19.58685874938965
+      ],
+      "target": [
+        -18.879751342332582,
+        5.400000095367432,
+        26.657926699950245
+      ],
+      "up": [
+        0,
+        1,
+        -2.7755575615628914e-17
+      ],
+      "lensMm": 18,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R1-C-wall.png",
+      "referenceImageSha256": "06a1c089a096b0da19b5147a56a36fc718154ecd6d20b0f8dc639e33ad663994"
+    },
+    {
+      "id": "R1-D-ceiling",
+      "room": "R1",
+      "purpose": "천장 상향; 화면 위쪽 +u",
+      "position": [
+        -24.890159606933594,
+        1.649999976158142,
+        24.890159606933594
+      ],
+      "target": [
+        -24.890159606933594,
+        11.64999997615815,
+        24.890159606933594
+      ],
+      "up": [
+        -0.7071067883752515,
+        0,
+        0.7071067739978443
+      ],
+      "lensMm": 20,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R1-D-ceiling.png",
+      "referenceImageSha256": "9c239e6ce8dd7a6ae9a488592fdb38f795af42dc81f66af11c4cbfb87038c84a"
+    },
+    {
+      "id": "R1-E-capital",
+      "room": "R1",
+      "purpose": "주두 근접 비교",
+      "position": [
+        -17.571603775024414,
+        6.199999809265137,
+        22.37993049621582
+      ],
+      "target": [
+        -13.88395117151728,
+        6.408605009470268,
+        31.672814986313305
+      ],
+      "up": [
+        -0.007694322217972366,
+        0.9997823956764159,
+        -0.01938965448718536
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R1-E-capital.png",
+      "referenceImageSha256": "6d8c277240ec76c6bead4b7844ddc65a191d3fbf71bb765c7c998ea973523132"
+    },
+    {
+      "id": "R1-F-base",
+      "room": "R1",
+      "purpose": "기단과 바닥 접점",
+      "position": [
+        -13.222896575927734,
+        0.550000011920929,
+        18.172643661499023
+      ],
+      "target": [
+        -9.897949044884951,
+        -0.5186789912875125,
+        27.542950438969758
+      ],
+      "up": [
+        0.03573766389237745,
+        0.994273227981632,
+        0.1007152793696252
+      ],
+      "lensMm": 45,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R1-F-base.png",
+      "referenceImageSha256": "788b8d64ecdf1e41fe4cc43fc4736fd85269553ba6cc0177259d78ffe8f571f3"
+    },
+    {
+      "id": "R1-G-cornice",
+      "room": "R1",
+      "purpose": "상부 몰딩 10.30~10.80m",
+      "position": [
+        -17.465538024902344,
+        10.199999809265137,
+        22.132442474365234
+      ],
+      "target": [
+        -14.32982314009736,
+        11.493416265979512,
+        31.53958688862363
+      ],
+      "up": [
+        -0.040901425357167925,
+        0.9916000901043751,
+        -0.12270425709301053
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R1-G-cornice.png",
+      "referenceImageSha256": "cbe7ca5b5dcbcc69734f0facb1c41ca2f25b45962ac0a45be40a4a8b840d0655"
+    },
+    {
+      "id": "R1-H-roof-junction",
+      "room": "R1",
+      "purpose": "천창 반환면 / 창틀 지지 / R4 칼라",
+      "position": [
+        -24.890159606933594,
+        14.699999809265137,
+        24.890159606933594
+      ],
+      "target": [
+        -29.558913800282284,
+        22.210357317021572,
+        29.558913657831493
+      ],
+      "up": [
+        0.5310624779420591,
+        0.6602615398892059,
+        -0.5310624666319157
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R1-H-roof-junction.png",
+      "referenceImageSha256": "ca4e7fe5016add3b39c7468d40783b581328ff3e50bdbaffa37c67d9cdf9cca1"
+    },
+    {
+      "id": "R2-A-entry",
+      "room": "R2",
+      "purpose": "입구에서 긴 공간과 천장 반복",
+      "position": [
+        13.010765075683594,
+        1.649999976158142,
+        13.010765075683594
+      ],
+      "target": [
+        19.909678227447735,
+        3.843171226706734,
+        19.909677829892246
+      ],
+      "up": [
+        -0.15508062866996997,
+        0.9756536263744786,
+        -0.1550806240432887
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R2-A-entry.png",
+      "referenceImageSha256": "de4a980e7a07f5fcca0507209080b4bb6d14c87a0b903ef2138f504daf6bd490"
+    },
+    {
+      "id": "R2-B-reverse",
+      "room": "R2",
+      "purpose": "반대 방향에서 C0 홀 연결",
+      "position": [
+        35.708892822265625,
+        1.649999976158142,
+        37.405948638916016
+      ],
+      "target": [
+        28.98917778066364,
+        3.060872002430187,
+        30.13581315976908
+      ],
+      "up": [
+        0.09576446376648895,
+        0.9899971723468854,
+        0.1036087169338975
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R2-B-reverse.png",
+      "referenceImageSha256": "b97091f01b9480aaf73c34b6cb125c3cfc90fd53f5079101df333cd8398b2fba"
+    },
+    {
+      "id": "R2-C-wall",
+      "room": "R2",
+      "purpose": "작품 구간 정면; 높은 검사용 카메라",
+      "position": [
+        19.58685874938965,
+        5.400000095367432,
+        25.95081901550293
+      ],
+      "target": [
+        26.657926422559996,
+        5.400000095367432,
+        18.879751064942333
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 18,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R2-C-wall.png",
+      "referenceImageSha256": "39653477b975ecc0fb63ea5f4d07941da86e45723cfc979c0c8158b05f6ac08e"
+    },
+    {
+      "id": "R2-D-ceiling",
+      "room": "R2",
+      "purpose": "천장 상향; 화면 위쪽 +u",
+      "position": [
+        24.890159606933594,
+        1.649999976158142,
+        24.890159606933594
+      ],
+      "target": [
+        24.890159606933594,
+        11.64999997615815,
+        24.890159606933594
+      ],
+      "up": [
+        0.7071067883752515,
+        0,
+        0.7071067739978443
+      ],
+      "lensMm": 20,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R2-D-ceiling.png",
+      "referenceImageSha256": "ff0457ba82b3e93f1c1a64f9016824cf9dc01faf11b13624db0085d432b1d06b"
+    },
+    {
+      "id": "R2-E-capital",
+      "room": "R2",
+      "purpose": "주두 근접 비교",
+      "position": [
+        22.37993049621582,
+        6.199999809265137,
+        17.571603775024414
+      ],
+      "target": [
+        31.672815054765916,
+        6.408604696860263,
+        13.883951326333978
+      ],
+      "up": [
+        -0.019389625301178492,
+        0.999782396328678,
+        0.0076943110130710535
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R2-E-capital.png",
+      "referenceImageSha256": "1629c7ea3f522815fbcaa72d06925da77640bceb602d43bab45391eb6a7ca65e"
+    },
+    {
+      "id": "R2-F-base",
+      "room": "R2",
+      "purpose": "기단과 바닥 접점",
+      "position": [
+        18.172643661499023,
+        0.550000011920929,
+        13.222896575927734
+      ],
+      "target": [
+        27.542950456107835,
+        -0.5186785989904177,
+        9.897948967094093
+      ],
+      "up": [
+        0.1007152385523396,
+        0.9942732321981751,
+        -0.035737661612637805
+      ],
+      "lensMm": 45,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R2-F-base.png",
+      "referenceImageSha256": "501e48dc9fd5a1be147c6f366297a487a15564cb5ca10f0ff7fcd09f3f5af67d"
+    },
+    {
+      "id": "R2-G-cornice",
+      "room": "R2",
+      "purpose": "상부 몰딩 10.30~10.80m",
+      "position": [
+        22.132442474365234,
+        10.199999809265137,
+        17.465538024902344
+      ],
+      "target": [
+        31.539586918963234,
+        11.49341590773094,
+        14.329823083346197
+      ],
+      "up": [
+        -0.12270424307105748,
+        0.9916000947772703,
+        0.040901354134884715
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R2-G-cornice.png",
+      "referenceImageSha256": "275bb43c9264c9fe2afa5f0024df495dd39eec48c69b03ff2bd7eebe30224c77"
+    },
+    {
+      "id": "R2-H-roof-junction",
+      "room": "R2",
+      "purpose": "천창 반환면 / 창틀 지지 / R4 칼라",
+      "position": [
+        27.718585968017578,
+        13,
+        22.061731338500977
+      ],
+      "target": [
+        31.2268180194611,
+        21.682431407532388,
+        18.553499201552288
+      ],
+      "up": [
+        -0.6139405905143075,
+        0.4961389407564697,
+        0.6139406345763341
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R2-H-roof-junction.png",
+      "referenceImageSha256": "9e035a7457519b993131bf1288eb534f3fde4610e9cb6b2beafda78ea48c1657"
+    },
+    {
+      "id": "R3-A-entry",
+      "room": "R3",
+      "purpose": "입구에서 긴 공간과 천장 반복",
+      "position": [
+        -13.010765075683594,
+        1.649999976158142,
+        -13.010765075683594
+      ],
+      "target": [
+        -19.909678227447735,
+        3.843171226706734,
+        -19.909677829892246
+      ],
+      "up": [
+        0.15508062866996997,
+        0.9756536263744786,
+        0.15508062404328826
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R3-A-entry.png",
+      "referenceImageSha256": "c2920679dedfe5cfb7a57f2c7a5181e508644a7eb444e852243381701ff364c9"
+    },
+    {
+      "id": "R3-B-reverse",
+      "room": "R3",
+      "purpose": "반대 방향에서 C0 홀 연결",
+      "position": [
+        -35.708892822265625,
+        1.649999976158142,
+        -37.405948638916016
+      ],
+      "target": [
+        -28.98917778066364,
+        3.0608720024301865,
+        -30.13581315976908
+      ],
+      "up": [
+        -0.09576446376648895,
+        0.9899971723468854,
+        -0.10360871693389712
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R3-B-reverse.png",
+      "referenceImageSha256": "f56b00723a78b94ea8e12ff557496a523fd31bdcae088476b5bea8ebd10a308e"
+    },
+    {
+      "id": "R3-C-wall",
+      "room": "R3",
+      "purpose": "작품 구간 정면; 높은 검사용 카메라",
+      "position": [
+        -19.58685874938965,
+        5.400000095367432,
+        -25.95081901550293
+      ],
+      "target": [
+        -26.657926422559996,
+        5.400000095367432,
+        -18.879751064942333
+      ],
+      "up": [
+        0,
+        1,
+        -2.7755575615628914e-17
+      ],
+      "lensMm": 18,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R3-C-wall.png",
+      "referenceImageSha256": "f1c49b4ba70d599bd079e6303bc71c2cd9d3a08d2623677e0a89095e0058d896"
+    },
+    {
+      "id": "R3-D-ceiling",
+      "room": "R3",
+      "purpose": "천장 상향; 화면 위쪽 +u",
+      "position": [
+        -24.890159606933594,
+        1.649999976158142,
+        -24.890159606933594
+      ],
+      "target": [
+        -24.890159606933594,
+        11.64999997615815,
+        -24.890159606933594
+      ],
+      "up": [
+        -0.7071067883752515,
+        0,
+        -0.7071067739978436
+      ],
+      "lensMm": 20,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R3-D-ceiling.png",
+      "referenceImageSha256": "4d99cfbd01a2134a80b27a2a6d937daa0737c32f6b2eaa27ed3dffafcbe399d2"
+    },
+    {
+      "id": "R3-E-capital",
+      "room": "R3",
+      "purpose": "주두 근접 비교",
+      "position": [
+        -22.37993049621582,
+        6.199999809265137,
+        -17.571603775024414
+      ],
+      "target": [
+        -31.672815054765916,
+        6.408604696860263,
+        -13.883951326333978
+      ],
+      "up": [
+        0.019389625301178492,
+        0.999782396328678,
+        -0.0076943110130713865
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R3-E-capital.png",
+      "referenceImageSha256": "9109173d8eed13c45d0a36bbfc2096501d7a8128ad801e1bdc3d56d55fa04800"
+    },
+    {
+      "id": "R3-F-base",
+      "room": "R3",
+      "purpose": "화단 기단",
+      "position": [
+        -17.324115753173828,
+        1,
+        -13.788581848144531
+      ],
+      "target": [
+        -26.80611216061557,
+        -1.873478927597188,
+        -12.434010704971612
+      ],
+      "up": [
+        -0.2844599040992635,
+        0.9578262830631388,
+        0.04063710660577602
+      ],
+      "lensMm": 45,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R3-F-base.png",
+      "referenceImageSha256": "08ff80365b2a6483f5434c86adcc6cfbde6e444d89b01b5b1bbc64fe07e04018"
+    },
+    {
+      "id": "R3-G-cornice",
+      "room": "R3",
+      "purpose": "상부 몰딩 10.30~10.80m",
+      "position": [
+        -22.132442474365234,
+        10.199999809265137,
+        -17.465538024902344
+      ],
+      "target": [
+        -31.539586918963234,
+        11.49341590773094,
+        -14.329823083346197
+      ],
+      "up": [
+        0.12270424307105748,
+        0.9916000947772703,
+        -0.04090135413488488
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R3-G-cornice.png",
+      "referenceImageSha256": "9af30f288fedf95f5d994882d6bc8628aede2c1aec52c0c75d373de3033941ca"
+    },
+    {
+      "id": "R3-H-roof-junction",
+      "room": "R3",
+      "purpose": "천창 반환면 / 창틀 지지 / R4 칼라",
+      "position": [
+        -28.14284896850586,
+        12,
+        -21.637468338012695
+      ],
+      "target": [
+        -32.863211013884126,
+        19.445560014700128,
+        -16.917106251471996
+      ],
+      "up": [
+        0.5264805881021373,
+        0.6675600052991382,
+        -0.5264806071230375
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R3-H-roof-junction.png",
+      "referenceImageSha256": "b6e6e5bd6fa578f20a82d050c18b139c955dd1669160b64917aee81a3834f537"
+    },
+    {
+      "id": "R4-A-entry",
+      "room": "R4",
+      "purpose": "입구에서 긴 공간과 천장 반복",
+      "position": [
+        13.010765075683594,
+        1.649999976158142,
+        -13.010765075683594
+      ],
+      "target": [
+        19.909678227447735,
+        3.843171226706734,
+        -19.909677829892246
+      ],
+      "up": [
+        -0.15508062866996997,
+        0.9756536263744786,
+        0.15508062404328826
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R4-A-entry.png",
+      "referenceImageSha256": "86562ac5dadcebb20786cf584c545bf530a1546a26267d28cb0cdb72e4531edf"
+    },
+    {
+      "id": "R4-B-reverse",
+      "room": "R4",
+      "purpose": "반대 방향에서 C0 홀 연결",
+      "position": [
+        37.405948638916016,
+        1.649999976158142,
+        -35.708892822265625
+      ],
+      "target": [
+        30.13581307090258,
+        3.0608716566404572,
+        -28.989177804207273
+      ],
+      "up": [
+        0.1036086680185489,
+        0.9899971772748295,
+        -0.09576446574430447
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R4-B-reverse.png",
+      "referenceImageSha256": "ee9268f3c2794b16063874bd63787fdcad399d6cf1469259f41b14a5c2750c74"
+    },
+    {
+      "id": "R4-C-wall",
+      "room": "R4",
+      "purpose": "작품 구간 정면; 높은 검사용 카메라",
+      "position": [
+        25.95081901550293,
+        5.400000095367432,
+        -19.58685874938965
+      ],
+      "target": [
+        18.879751342332582,
+        5.400000095367432,
+        -26.657926699950245
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 18,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R4-C-wall.png",
+      "referenceImageSha256": "01106fa878c5db3cc45ea1021aa044d06995b56734332d733c1e7b5329912b5b"
+    },
+    {
+      "id": "R4-D-ceiling",
+      "room": "R4",
+      "purpose": "천장 상향; 화면 위쪽 +u",
+      "position": [
+        24.890159606933594,
+        1.649999976158142,
+        -24.890159606933594
+      ],
+      "target": [
+        24.890159606933594,
+        11.64999997615815,
+        -24.890159606933594
+      ],
+      "up": [
+        0.7071067883752515,
+        0,
+        -0.7071067739978436
+      ],
+      "lensMm": 20,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R4-D-ceiling.png",
+      "referenceImageSha256": "9b9be4c28e6166bd18dcbde8a28d96e528c2c920f38822284424824c27f891d2"
+    },
+    {
+      "id": "R4-E-capital",
+      "room": "R4",
+      "purpose": "주두 근접 비교",
+      "position": [
+        17.571603775024414,
+        6.199999809265137,
+        -22.37993049621582
+      ],
+      "target": [
+        13.88395117151728,
+        6.408605009470267,
+        -31.672814986313305
+      ],
+      "up": [
+        0.007694322217972366,
+        0.9997823956764159,
+        0.019389654487185437
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R4-E-capital.png",
+      "referenceImageSha256": "550126595514d5cafc065aa4f4df931f32210498503a5518e48e3508bd128897"
+    },
+    {
+      "id": "R4-F-base",
+      "room": "R4",
+      "purpose": "기단과 바닥 접점",
+      "position": [
+        13.222896575927734,
+        0.550000011920929,
+        -18.172643661499023
+      ],
+      "target": [
+        9.897949044884951,
+        -0.5186789912875127,
+        -27.542950438969758
+      ],
+      "up": [
+        -0.03573766389237745,
+        0.994273227981632,
+        -0.10071527936962477
+      ],
+      "lensMm": 45,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R4-F-base.png",
+      "referenceImageSha256": "bd645a5b433558a0aeaea8eefdb2db90d2e8e22d9bb655715c6e561235393fa9"
+    },
+    {
+      "id": "R4-G-cornice",
+      "room": "R4",
+      "purpose": "상부 몰딩 10.30~10.80m",
+      "position": [
+        17.465538024902344,
+        10.199999809265137,
+        -22.132442474365234
+      ],
+      "target": [
+        14.32982314009736,
+        11.493416265979512,
+        -31.53958688862363
+      ],
+      "up": [
+        0.040901425357167925,
+        0.9916000901043751,
+        0.12270425709301103
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R4-G-cornice.png",
+      "referenceImageSha256": "fdcb0977a65c7119954dfe333235f7ed01a0fff0325232b007ea4b8136f23d42"
+    },
+    {
+      "id": "R4-H-roof-junction",
+      "room": "R4",
+      "purpose": "천창 반환면 / 창틀 지지 / R4 칼라",
+      "position": [
+        23.122392654418945,
+        14.5,
+        -26.657926559448242
+      ],
+      "target": [
+        16.652946644792117,
+        18.536402015025672,
+        -33.12737221588746
+      ],
+      "up": [
+        0.28541673658692446,
+        0.914917803811341,
+        0.28541671069701435
+      ],
+      "lensMm": 50,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R4-H-roof-junction.png",
+      "referenceImageSha256": "378a4df2a22cbcbd3eff5c20cdc12e40f0a63b3f0394fb7ca7635513f1548306"
+    },
+    {
+      "id": "R4-H2-collar-context",
+      "room": "R4",
+      "purpose": "테라코타 돔 칼라 넓은 상세",
+      "position": [
+        24.890155792236328,
+        13,
+        -24.890159606933594
+      ],
+      "target": [
+        18.335649766608373,
+        16.751927723946544,
+        -31.444661045966786
+      ],
+      "up": [
+        0.2653014089017881,
+        0.9269468072887521,
+        0.2653012983230868
+      ],
+      "lensMm": 28,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "R4-H2-collar-context.png",
+      "referenceImageSha256": "a15f9dc1b166573cbb2463535aebe9b2883ef83ef7e2b5f193298ac6a88f7c5c"
+    },
+    {
+      "id": "R3-G-planting-full",
+      "room": "R3",
+      "purpose": "화단 전체 · 세 높이 식재",
+      "position": [
+        -13.576450198781712,
+        1.8,
+        -15.697770542341356
+      ],
+      "target": [
+        -13.010764773832474,
+        1.7,
+        -19.798989873223334
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 22.741122335780194,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "supplemental": true
+    },
+    {
+      "id": "R1-J-capital-oblique",
+      "room": "R1",
+      "purpose": "주두와 기둥 몸체 사선 접합",
+      "position": [
+        -12.58650070512055,
+        6.3,
+        16.97056274847714
+      ],
+      "target": [
+        -12.409724009823911,
+        6.35,
+        20.400030637231897
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 36,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "cameraProvenance": "Supplemental web inspection, fixed local coordinates before candidate review"
+    },
+    {
+      "id": "R1-K-arch-oblique",
+      "room": "R1",
+      "purpose": "아치 단면·주두 접합 45도 사선",
+      "position": [
+        -14.283556979968264,
+        7.2,
+        14.990663761154806
+      ],
+      "target": [
+        -14.354267658086922,
+        7.7,
+        22.698127676088177
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "cameraProvenance": "Supplemental web inspection, fixed local coordinates before candidate review"
+    },
+    {
+      "id": "R2-J-capital-oblique",
+      "room": "R2",
+      "purpose": "주두와 기둥 몸체 사선 접합",
+      "position": [
+        16.970562748477136,
+        6.3,
+        12.58650070512055
+      ],
+      "target": [
+        20.400030637231893,
+        6.35,
+        12.409724009823913
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 36,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "cameraProvenance": "Supplemental web inspection, fixed local coordinates before candidate review"
+    },
+    {
+      "id": "R2-K-arch-oblique",
+      "room": "R2",
+      "purpose": "아치 단면·주두 접합 45도 사선",
+      "position": [
+        14.990663761154803,
+        7.2,
+        14.283556979968264
+      ],
+      "target": [
+        22.698127676088173,
+        7.7,
+        14.354267658086922
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "cameraProvenance": "Supplemental web inspection, fixed local coordinates before candidate review"
+    },
+    {
+      "id": "R3-J-capital-oblique",
+      "room": "R3",
+      "purpose": "주두와 기둥 몸체 사선 접합",
+      "position": [
+        -16.97056274847714,
+        6.3,
+        -12.586500705120548
+      ],
+      "target": [
+        -20.400030637231897,
+        6.35,
+        -12.409724009823911
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 36,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "cameraProvenance": "Supplemental web inspection, fixed local coordinates before candidate review"
+    },
+    {
+      "id": "R3-K-arch-oblique",
+      "room": "R3",
+      "purpose": "아치 단면·주두 접합 45도 사선",
+      "position": [
+        -14.990663761154806,
+        7.2,
+        -14.283556979968262
+      ],
+      "target": [
+        -22.698127676088177,
+        7.7,
+        -14.354267658086918
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "cameraProvenance": "Supplemental web inspection, fixed local coordinates before candidate review"
+    },
+    {
+      "id": "R3-L-planting-side",
+      "room": "R3",
+      "purpose": "온실 식재 곡률·분지 측면",
+      "position": [
+        -16.404877323527902,
+        1.7,
+        -12.869343417595166
+      ],
+      "target": [
+        -19.94041122946064,
+        1.8,
+        -12.869343417595168
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 22,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "cameraProvenance": "Supplemental web inspection, fixed local coordinates before candidate review"
+    },
+    {
+      "id": "R4-J-capital-oblique",
+      "room": "R4",
+      "purpose": "주두와 기둥 몸체 사선 접합",
+      "position": [
+        12.586500705120548,
+        6.3,
+        -16.970562748477143
+      ],
+      "target": [
+        12.409724009823911,
+        6.35,
+        -20.400030637231897
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 36,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "cameraProvenance": "Supplemental web inspection, fixed local coordinates before candidate review"
+    },
+    {
+      "id": "R4-K-arch-oblique",
+      "room": "R4",
+      "purpose": "아치 단면·주두 접합 45도 사선",
+      "position": [
+        14.283556979968262,
+        7.2,
+        -14.990663761154806
+      ],
+      "target": [
+        14.354267658086918,
+        7.7,
+        -22.698127676088177
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "lensMm": 24,
+      "sensorWidthMm": 36,
+      "referenceAspect": 1.7777777777777777,
+      "referenceImage": "",
+      "referenceImageSha256": "",
+      "cameraProvenance": "Supplemental web inspection, fixed local coordinates before candidate review"
+    }
+  ],
+  "supplementalDetailSchedule": "output/revision-j-detail/detail-camera-schedule.json"
+}

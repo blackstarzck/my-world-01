@@ -2,13 +2,22 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, ArrowLeft, ArrowRight, X, Grid2X2, RotateCcw, MoveHorizontal, Play, Pause, Copy, Check, Volume2 } from 'lucide-react';
 import { projects, profile } from './data/projects';
 import MuseumMap from './MuseumMap';
+import layout from './data/layout.json';
+import { galleryReviewEnabled } from './gallery-diagnostics';
 const Gallery=lazy(()=>import('./Gallery'));
-function projectFromURL(){const id=location.hash.match(/^#\/project\/([^/]+)$/)?.[1];return projects.some(p=>p.id===id)?id!:null;}
+function selectionFromURL(){
+  const match=location.hash.match(/^#\/project\/([^/]+)(?:\/slot\/([^/]+))?$/);
+  const id=match?.[1];
+  if(!projects.some(p=>p.id===id))return {project:null,slot:null};
+  const slot=layout.artworks.find(a=>a.id===match?.[2]&&a.projectId===id)?.id??null;
+  return {project:id!,slot};
+}
 function useMedia(query:string){const [matches,set]=useState(()=>matchMedia(query).matches);useEffect(()=>{const media=matchMedia(query),update=()=>set(media.matches);media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[query]);return matches;}
 function hasWebGL(){try{const canvas=document.createElement('canvas');const gl=canvas.getContext('webgl2');if(gl){gl.getExtension('WEBGL_lose_context')?.loseContext();return true;}}catch{/* Static gallery remains available. */}return false;}
 
 export default function App(){
-  const [selected,setSelected]=useState<string|null>(projectFromURL);
+  const [selected,setSelected]=useState<string|null>(()=>selectionFromURL().project);
+  const [selectedSlot,setSelectedSlot]=useState<string|null>(()=>selectionFromURL().slot);
   const [mediaIndex,setMediaIndex]=useState(0),[playing,setPlaying]=useState(false),[mediaError,setMediaError]=useState(false),[retry,setRetry]=useState(0);
   const [ready,setReady]=useState(false),[flat,setFlat]=useState(()=>new URLSearchParams(location.search).get('view')==='flat'||!hasWebGL());
   const [sceneKey,setSceneKey]=useState(0),[reset,setReset]=useState(0),[copied,setCopied]=useState(false);
@@ -16,10 +25,18 @@ export default function App(){
   const mobile=useMedia('(max-width: 899px)'),reduced=useMedia('(prefers-reduced-motion: reduce)');
   const dialog=useRef<HTMLDialogElement>(null),heading=useRef<HTMLHeadingElement>(null),lastSelected=useRef<string|null>(null);
   const activeIndex=projects.findIndex(p=>p.id===selected),project=projects[activeIndex],media=project?.media[mediaIndex];
-  const open=useCallback((id:string|null)=>{setSheet(null);if(id===projectFromURL())return;history.pushState(null,'',`${location.pathname}${location.search}${id?`#/project/${id}`:''}`);setSelected(id);document.body.style.cursor='';},[]);
+  const open=useCallback((id:string|null,slotId?:string)=>{
+    setSheet(null);
+    const slot=layout.artworks.find(a=>a.id===slotId&&a.projectId===id)?.id??null;
+    const current=selectionFromURL();
+    if(id===current.project&&slot===current.slot)return;
+    if(galleryReviewEnabled)window.dispatchEvent(new CustomEvent('gallery-navigation-request',{detail:{at:performance.now(),project:id,slot}}));
+    history.pushState(null,'',`${location.pathname}${location.search}${id?`#/project/${id}${slot?`/slot/${slot}`:''}`:''}`);
+    setSelected(id);setSelectedSlot(slot);document.body.style.cursor='';
+  },[]);
   const step=useCallback((delta:number)=>{const current=projects.findIndex(p=>p.id===selected);open(projects[(current+delta+projects.length)%projects.length].id);},[selected,open]);
   const onReady=useCallback(()=>setReady(true),[]),onFailure=useCallback(()=>setFlat(true),[]),onVideoEnd=useCallback(()=>setPlaying(false),[]);
-  useEffect(()=>{const changed=()=>setSelected(projectFromURL());window.addEventListener('popstate',changed);window.addEventListener('hashchange',changed);return()=>{window.removeEventListener('popstate',changed);window.removeEventListener('hashchange',changed);};},[]);
+  useEffect(()=>{const changed=()=>{const next=selectionFromURL();setSelected(next.project);setSelectedSlot(next.slot);};window.addEventListener('popstate',changed);window.addEventListener('hashchange',changed);return()=>{window.removeEventListener('popstate',changed);window.removeEventListener('hashchange',changed);};},[]);
   useEffect(()=>{setMediaIndex(0);setPlaying(false);setMediaError(false);setCopied(false);document.title=selected?`${projects.find(p=>p.id===selected)?.title} — STILL`:'STILL — A space for ideas';
     if(selected){lastSelected.current=selected;requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}));}
     else if(lastSelected.current){requestAnimationFrame(()=>document.getElementById(`project-${lastSelected.current}`)?.focus({preventScroll:true}));}
@@ -34,8 +51,8 @@ export default function App(){
   return <main className={`${selected?'is-detail':''} ${flat?'is-flat':''}`}>
     <a className="skip-link" href={selected?'#project-title':'#project-navigation'}>{selected?'작품 설명으로 이동':'작품 목록으로 이동'}</a>
     <div className="gallery-viewport" aria-label={selected?`${project.title} 작품 미리보기`:'3D 포트폴리오 전시장'}>
-      {flat?<div className="flat-scene" style={{backgroundImage:'url(/gallery-poster.webp)'}}>{selected?<div className="flat-art">{media?.type==='video'?<video key={media.src} src={media.src} controls playsInline onError={()=>setMediaError(true)}/>:<img key={`${media?.src}-${retry}`} src={media?.src} alt={media?.alt} onError={()=>setMediaError(true)}/>}</div>:null}</div>:
-      <Suspense fallback={null}><Gallery key={sceneKey} selected={selected} mediaIndex={mediaIndex} playing={playing} retry={retry} reduced={reduced} mobile={mobile} reset={reset} onSelect={open} onReady={onReady} onMediaError={setMediaError} onVideoEnd={onVideoEnd} onFailure={onFailure}/></Suspense>}
+      {flat?<div className="flat-scene" style={{backgroundImage:'url(/gallery-i-poster.webp)'}}>{selected?<div className="flat-art">{media?.type==='video'?<video key={media.src} src={media.src} controls playsInline onError={()=>setMediaError(true)}/>:<img key={`${media?.src}-${retry}`} src={media?.src} alt={media?.alt} onError={()=>setMediaError(true)}/>}</div>:null}</div>:
+      <Suspense fallback={null}><Gallery key={sceneKey} selected={selected} selectedSlot={selectedSlot} mediaIndex={mediaIndex} playing={playing} retry={retry} reduced={reduced} mobile={mobile} reset={reset} onSelect={open} onReady={onReady} onMediaError={setMediaError} onVideoEnd={onVideoEnd} onFailure={onFailure}/></Suspense>}
       {!ready&&!flat?<div className="loading" role="status"><span className="loading-mark">s.</span><p>전시장의 빛을 불러오는 중</p><button onClick={()=>setFlat(true)}>이미지로 먼저 둘러보기 <ArrowUpRight size={14}/></button></div>:null}
       {selected?<div className="preview-label"><span className="tiny-dot"/> IN THE MUSEUM <span className="preview-number">{String(activeIndex+1).padStart(2,'0')} / 08</span></div>:null}
       {selected?<div className="media-bar" aria-label="작품 미리보기 조작">
@@ -48,12 +65,11 @@ export default function App(){
     </div>
     <header className="site-header">
       <button className="wordmark" aria-label="STILL 전체 전시 보기" onClick={()=>{open(null);setReset(n=>n+1);}}>still<span>.</span></button>
-      <div className="header-caption">INDEPENDENT DESIGNER<br/><span>SELECTED WORKS · 2026</span></div>
-      <nav aria-label="메인 메뉴"><button className="index-button" onClick={()=>setSheet('index')}><Grid2X2 size={14}/><span>프로젝트</span><sup>08</sup></button><button onClick={()=>setSheet('about')}>소개 · 연락 <ArrowUpRight size={14}/></button></nav>
+      <nav aria-label="메인 메뉴"><button className="index-button" aria-label="프로젝트 목록 열기" onClick={()=>setSheet('index')}><Grid2X2 size={14}/><span>프로젝트</span><sup>08</sup></button><button onClick={()=>setSheet('about')}>소개 · 연락 <ArrowUpRight size={14}/></button></nav>
     </header>
     {!selected?<>
-      <div className="edition"><span className="tiny-dot"/> EIGHT ROOMS, ONE COURTYARD <span>LIGHT COURT · 14M</span></div>
-      <section className="intro"><p className="eyebrow">A PERSONAL ARCHIVE</p><h1>Ideas, <br/><em>given space.</em></h1><p className="intro-caption">{profile.tagline} <span>작품을 선택해 이야기를 만나보세요.</span></p></section>
+      <div className="edition"><span className="tiny-dot"/> FOUR ROOMS, ONE OPEN HALL <span>48 ARTWORK SPACES</span></div>
+      <section className="intro"><p className="eyebrow">A PERSONAL ARCHIVE</p><h1>Ideas, <br/><em>given space.</em></h1></section>
       <div className="view-tools"><span><MoveHorizontal size={15}/> 드래그하여 둘러보기</span><button className="round" onClick={()=>setReset(n=>n+1)} aria-label="처음 관람 위치로 돌아가기"><RotateCcw size={16}/></button></div>
       <nav className="project-rail" id="project-navigation" aria-label="전시된 프로젝트">
         <div className="rail-title">THE COLLECTION <span>선택한 작업들</span></div>

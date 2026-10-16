@@ -1,48 +1,56 @@
 const dist=(a,b)=>Math.hypot(...a.map((n,i)=>n-b[i]));
-const boundaryCache=new WeakMap();
-function corridorIndex(layout){
-  if(boundaryCache.has(layout))return boundaryCache.get(layout);
-  const rows=new Map(),cells=new Map();
-  for(const poly of layout.circulation)for(const ring of poly)for(let i=1;i<ring.length;i++){
-    const edge=[ring[i-1],ring[i]],minX=Math.floor(Math.min(edge[0][0],edge[1][0])/4),maxX=Math.floor(Math.max(edge[0][0],edge[1][0])/4),minZ=Math.floor(Math.min(edge[0][1],edge[1][1])/4),maxZ=Math.floor(Math.max(edge[0][1],edge[1][1])/4);
-    for(let z=minZ;z<=maxZ;z++){if(!rows.has(z))rows.set(z,[]);rows.get(z).push(edge);for(let x=minX;x<=maxX;x++){const key=x+','+z;if(!cells.has(key))cells.set(key,[]);cells.get(key).push(edge);}}
-  }
-  const result={rows,cells};boundaryCache.set(layout,result);return result;
-}
-export function localPoint(room,p){const a=room.angle*Math.PI/180,x=p[0]-room.door[0],z=p[2]-room.door[1];return [x*Math.cos(a)+z*Math.sin(a),p[1],-x*Math.sin(a)+z*Math.cos(a)];}
-function inside(p,ring){let yes=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const a=ring[i],b=ring[j];if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])yes=!yes;}return yes;}
-function segmentDistance(p,a,b){const v=b.map((n,i)=>n-a[i]),l=v.reduce((s,n)=>s+n*n,0),t=l?Math.max(0,Math.min(1,p.reduce((s,n,i)=>s+(n-a[i])*v[i],0)/l)):0;return dist(p,a.map((n,i)=>n+t*v[i]));}
+const geometryCache=new WeakMap();
+function polygonBounds(poly){const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[1]);return [Math.min(...xs),Math.min(...zs),Math.max(...xs),Math.max(...zs)];}
+function inBounds(x,z,b,margin=0){return x>=b[0]-margin&&x<=b[2]+margin&&z>=b[1]-margin&&z<=b[3]+margin;}
+function inPolygon(x,z,poly){let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+  const a=poly[i],b=poly[j];if((a[1]>z)!==(b[1]>z)&&x<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0])inside=!inside;
+}return inside;}
+function edgeDistance(x,z,poly){let best=Infinity;for(let i=0;i<poly.length;i++){
+  const a=poly[i],b=poly[(i+1)%poly.length],dx=b[0]-a[0],dz=b[1]-a[1];
+  const t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz||1)));
+  best=Math.min(best,(x-a[0]-t*dx)**2+(z-a[1]-t*dz)**2);
+}return best;}
+function geometry(layout){if(!geometryCache.has(layout))geometryCache.set(layout,{
+  regions:layout.walkPolygons.map(rings=>({rings,bounds:polygonBounds(rings[0])})),
+  obstacles:layout.obstacles.map(o=>({...o,bounds:polygonBounds(o.poly)})),
+  portals:layout.portals.map(p=>({...p,bounds:polygonBounds(p.poly)})),
+});return geometryCache.get(layout);}
 export function isWalkable(layout,p,margin=.23){
-  if(p[1]<.4)return false;
-  for(const r of layout.rooms){const [x,y,z]=localPoint(r,p);
-    // Extend the open doorway into both adjoining spaces so their clearance
-    // insets overlap even when planning a wider, more relaxed route.
-    if(Math.abs(x)<1.6-margin&&Math.abs(z)<Math.max(.65,.42+margin)&&y<3.6-margin)return true;
-    if(!inside([x,z],r.local))continue;
-    if(y>r.h-.3)return false;
-    if(Math.abs(x-r.artLocal[0])<r.art[0]/2+margin&&Math.abs(z-r.artLocal[1])<.25+margin&&y<r.art[1]+.65+margin)return false;
-    if(Math.abs(x)<1.6-margin&&z>-.65&&y<3.6-margin)return true;
-    return Math.min(...r.local.map((a,i)=>segmentDistance([x,z],a,r.local[(i+1)%r.local.length])))>.3+margin;
+  if(!Array.isArray(p)||p.length!==3||!p.every(Number.isFinite))return false;
+  const [x,y,z]=p,g=geometry(layout);
+  if(y<.4||y>layout.maximumWalkHeight-margin)return false;
+  // Clearance is measured against the UNION boundary. Eroding each room
+  // separately closes the shared seams between the hall and its four throats.
+  if(!g.regions.some(({rings,bounds})=>inBounds(x,z,bounds)&&inPolygon(x,z,rings[0])&&!rings.slice(1).some(h=>inPolygon(x,z,h))&&rings.every(r=>edgeDistance(x,z,r)>=(margin-1e-7)**2)))return false;
+  for(const o of g.obstacles)if(inBounds(x,z,o.bounds,margin)&&(inPolygon(x,z,o.poly)||edgeDistance(x,z,o.poly)<margin**2))return false;
+  for(const portal of g.portals)if(inBounds(x,z,portal.bounds)&&inPolygon(x,z,portal.poly)){
+    const dx=x-portal.origin[0],by=-z+portal.origin[2];
+    const v=-Math.sin(portal.angle)*dx+Math.cos(portal.angle)*by;
+    const ceiling=portal.spring+Math.sqrt(Math.max(0,(portal.width/2)**2-v*v));
+    if(y>ceiling-margin)return false;
   }
-  if(Math.abs(p[0])<8-margin&&Math.abs(p[2])<8-margin)return p[1]<layout.court.height-margin;
-  if(p[1]>layout.corridorHeight-margin)return false;
-  const q=[p[0],p[2]],index=corridorIndex(layout),cx=Math.floor(q[0]/4),cz=Math.floor(q[1]/4);let yes=false;
-  for(const [a,b] of index.rows.get(cz)||[])if((a[1]>q[1])!==(b[1]>q[1])&&q[0]<(b[0]-a[0])*(q[1]-a[1])/(b[1]-a[1])+a[0])yes=!yes;
-  if(!yes)return false;
-  for(let x=cx-1;x<=cx+1;x++)for(let z=cz-1;z<=cz+1;z++)for(const [a,b] of index.cells.get(x+','+z)||[])if(segmentDistance(q,a,b)<=.09+margin)return false;
   return true;
 }
 export function clearSegment(layout,a,b,margin=.23){const n=Math.max(1,Math.ceil(dist(a,b)/.08));for(let i=0;i<=n;i++)if(!isWalkable(layout,a.map((v,k)=>v+(b[k]-v)*i/n),margin))return false;return true;}
 export function cameraPose(layout,id,mobile,aspect){
-  const a=layout.artworks.find(a=>a.id===id);
+  const a=layout.artworks.find(a=>a.id===id)||layout.artworks.find(a=>a.id===layout.projectSlots[id]);
   if(!a)return {...layout.overview};
   const target=[...a.position];target[1]+=mobile?1.0:0;
-  const position=[target[0]+Math.sin(a.rotation)*a.viewDistance,2.3,target[2]+Math.cos(a.rotation)*a.viewDistance];
-  const fov=2*Math.atan(Math.max(a.height/(2*a.viewDistance*(mobile?.52:.67)),a.width/(2*a.viewDistance*aspect*.79)))*180/Math.PI;
-  return {position,target,fov:Math.max(45,Math.min(91,fov)),room:a.room};
+  const position=[...a.cameraPosition],forward=target.map((v,i)=>v-position[i]);
+  const length=Math.hypot(...forward);forward.forEach((_,i)=>{forward[i]/=length;});
+  const horizontal=Math.hypot(forward[0],forward[2]);
+  const right=[-forward[2]/horizontal,0,forward[0]/horizontal];
+  const up=[-forward[1]*forward[0]/horizontal,horizontal,-forward[1]*forward[2]/horizontal];
+  let tanHalf=Math.tan(45*Math.PI/360);
+  // Fit actual frame corners including camera tilt and mobile interface space.
+  for(const x of [-a.frameWidth/2,a.frameWidth/2])for(const y of [-a.frameHeight/2,a.frameHeight/2]){
+    const delta=[a.position[0]+x*Math.cos(a.rotation)-position[0],a.position[1]+y-position[1],a.position[2]-x*Math.sin(a.rotation)-position[2]];
+    const dot=v=>v.reduce((s,n,i)=>s+n*delta[i],0),depth=dot(forward),vertical=dot(up)/depth;
+    tanHalf=Math.max(tanHalf,Math.abs(dot(right)/depth)/(Math.max(.3,aspect)*.78),Math.abs(vertical)/(vertical>0?(mobile?.48:.67):.78));
+  }
+  return {position,target,fov:2*Math.atan(tanHalf)*180/Math.PI,room:a.room};
 }
-// Keep safe graph connections, but let the open court connect to every visible
-// waypoint. Restricting endpoints to their two nearest nodes forced long detours.
+// Connect endpoints to every visible safe waypoint in the X-shaped gallery.
 export function planRoute(layout,from,to){
   // Leave room for broad bends. A selection made halfway around a bend may
   // start closer to a wall, so use the already validated clearance there.
@@ -62,7 +70,7 @@ export function planRoute(layout,from,to){
   const route=[];for(let at=end;at!==-1;at=prev[at])route.unshift(nodes[at]);
   const short=[route[0]];
   for(let i=0;i<route.length-1;){let j=route.length-1;while(j>i+1&&!clear(route[i],route[j]))j--;if(dist(short.at(-1),route[j])>.001)short.push(route[j]);i=j;}
-  return roundRoute(layout,short);
+  return smoothRoute(layout,roundRoute(layout,short));
 }
 function roundRoute(layout,points){
   const result=[points[0]];
@@ -84,5 +92,43 @@ function roundRoute(layout,points){
   }
   result.push(points.at(-1));return result;
 }
+function smoothRoute(layout,route){
+  const metrics=routeMetrics(route),count=Math.ceil(metrics.total/.65);
+  const points=Array.from({length:count+1},(_,i)=>sampleRoute(route,metrics,i/count));
+  // Spread each bend along the whole path, instead of restricting its radius
+  // to the shortest neighbouring edge (often the small doorway connector).
+  // Relax the second differences, retaining the endpoints and wall clearance.
+  for(let pass=0;pass<32;pass++){
+    for(let j=1;j<count;j++){
+      const i=pass%2?count-j:j,p=points[i],a=points[i-1],b=points[i+1];
+      const aa=i>1?points[i-2]:a.map((v,k)=>2*v-p[k]);
+      const bb=i<count-1?points[i+2]:b.map((v,k)=>2*v-p[k]);
+      const candidate=p.map((v,k)=>k===1?v:v+.5*((4*(a[k]+b[k])-aa[k]-bb[k])/6-v));
+      if(clearSegment(layout,a,candidate,.3)&&clearSegment(layout,candidate,b,.3))points[i]=candidate;
+    }
+  }
+  // A cubic B-spline joins the relaxed controls with continuous tangent and
+  // curvature. Dense samples preserve that curve in the distance-based player.
+  const controls=[points[0],points[0],...points,points.at(-1),points.at(-1)],result=[];
+  for(let i=0;i<controls.length-3;i++){
+    const cp=controls.slice(i,i+4),n=Math.max(4,Math.ceil(dist(cp[1],cp[2])/.04));
+    for(let j=0;j<n;j++){
+      const t=j/n,u=1-t,w=[u**3/6,(3*t**3-6*t*t+4)/6,(-3*t**3+3*t*t+3*t+1)/6,t**3/6];
+      const p=cp[0].map((_,k)=>cp.reduce((sum,c,l)=>sum+c[k]*w[l],0));
+      if(!result.length||dist(result.at(-1),p)>1e-8)result.push(p);
+    }
+  }
+  result[0]=route[0];result.push(route.at(-1));
+  // Recheck the actual curve, including every chord, before using it. A route
+  // interrupted next to a wall can still fall back to its validated bends.
+  return result.every((p,i)=>!i||clearSegment(layout,result[i-1],p,.26))?result:route;
+}
 export function routeMetrics(points){let total=0;const distances=[0];for(let i=1;i<points.length;i++){total+=dist(points[i-1],points[i]);distances.push(total);}return {distances,total};}
-export function sampleRoute(points,metrics,t){const d=Math.max(0,Math.min(1,t))*metrics.total;let i=metrics.distances.findIndex(v=>v>=d);if(i<=0)return [...points[0]];const start=metrics.distances[i-1],u=(d-start)/(metrics.distances[i]-start||1);return points[i].map((n,k)=>points[i-1][k]+(n-points[i-1][k])*u);}
+function firstDistanceAtOrAfter(distances,d){
+  // routeMetrics is nondecreasing; lower-bound preserves findIndex's FIRST
+  // match at repeated/zero-length segments. NaN still produces no match.
+  let low=0,high=distances.length;
+  while(low<high){const middle=Math.floor((low+high)/2);if(distances[middle]>=d)high=middle;else low=middle+1;}
+  return low<distances.length?low:-1;
+}
+export function sampleRoute(points,metrics,t){const d=Math.max(0,Math.min(1,t))*metrics.total;let i=firstDistanceAtOrAfter(metrics.distances,d);if(i<=0)return [...points[0]];const start=metrics.distances[i-1],u=(d-start)/(metrics.distances[i]-start||1);return points[i].map((n,k)=>points[i-1][k]+(n-points[i-1][k])*u);}

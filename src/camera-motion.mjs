@@ -8,8 +8,8 @@ function direction(position,target){
  const [x,y,z]=target.map((v,i)=>v-position[i]);
  return {yaw:Math.atan2(x,z),pitch:Math.atan2(y,Math.hypot(x,z))};
 }
-// Short, responsive trips: accelerate promptly and ease only near the artwork.
-const TURN_RATE=3.4,TRAVEL_SPEED=22,ACCELERATION=36;
+// Slow down before bends, with room to accelerate and brake on either side.
+const TURN_RATE=2.6,TRAVEL_SPEED=22,ACCELERATION=24,LATERAL_ACCELERATION=20;
 
 // Monotone Hermite curves share a velocity at each key, without overshooting
 // the safe route distance or reversing a turn between samples.
@@ -60,26 +60,60 @@ export function createCameraMotion(points,fromTarget,toTarget,fromFov,toFov,retu
  const count=Math.ceil(metrics.total/.3);
  const distances=Array.from({length:count+1},(_,i)=>i*metrics.total/count);
  let previousHeading=angleNear(heading(0).yaw,start.yaw);
- const headings=distances.map(d=>{previousHeading=angleNear(heading(d).yaw,previousHeading);return previousHeading;});
+ const rawHeadings=distances.map(d=>{previousHeading=angleNear(heading(d).yaw,previousHeading);return previousHeading;});
+ // A look-ahead crossing a route join must not abruptly change the turn rate.
+ // Filter directions over distance, so the result is independent of frame rate.
+ const window=Math.ceil(1.8/(metrics.total/count));
+ const headings=rawHeadings.map((_,i)=>{
+  let sum=0,weight=0;
+  for(let j=-window;j<=window;j++){const w=1+window-Math.abs(j);sum+=rawHeadings[clamp(i+j,0,count)]*w;weight+=w;}
+  return sum/weight;
+ });
  const endYaw=angleNear(end.yaw,headings.at(-1));
  for(let i=1;i<distances.length;i++){
-  const d=distances[i],last=distances[i-1],prev=keys.at(-1),depart=blend(d/departureDistance),arrive=blend(1-(metrics.total-d)/arrivalDistance);
+  const d=distances[i],prev=keys.at(-1),depart=blend(d/departureDistance),arrive=blend(1-(metrics.total-d)/arrivalDistance);
   const travelYaw=headings[i];
   let yaw=start.yaw+(travelYaw-start.yaw)*depart;
   yaw=angleNear(yaw+(endYaw-yaw)*arrive,prev.yaw);
   const pitch=start.pitch*(1-depart)*(1-arrive)+end.pitch*arrive;
-  const accelerationDistance=Math.min((last+d)/2,metrics.total-(last+d)/2);
-  const speed=Math.min(TRAVEL_SPEED,Math.sqrt(2*ACCELERATION*Math.max(.03,accelerationDistance)));
-  const seconds=Math.max((d-last)/speed,1.5*Math.hypot(yaw-prev.yaw,pitch-prev.pitch)/TURN_RATE);
-  keys.push({position:i===count?points.at(-1):sampleRoute(points,metrics,d/metrics.total),distance:d,yaw,pitch,fov:fromFov+(toFov-fromFov)*ease(d/metrics.total),time:prev.time+seconds,turn:false});
+  keys.push({position:i===count?points.at(-1):sampleRoute(points,metrics,d/metrics.total),distance:d,yaw,pitch,fov:fromFov+(toFov-fromFov)*ease(d/metrics.total),time:0,turn:false});
+ }
+ const speeds=keys.map((key,i)=>{
+  if(i===0||i===count)return 0;
+  const a=keys[i-1],b=keys[i+1],ds=(b.distance-a.distance)/2;
+  const incoming=key.position.map((v,k)=>v-a.position[k]),outgoing=b.position.map((v,k)=>v-key.position[k]);
+  const cosine=incoming.reduce((sum,v,k)=>sum+v*outgoing[k],0)/(Math.hypot(...incoming)*Math.hypot(...outgoing));
+  const curvature=Math.acos(clamp(cosine,-1,1))/ds;
+  const rotation=Math.max(Math.hypot(key.yaw-a.yaw,key.pitch-a.pitch),Math.hypot(b.yaw-key.yaw,b.pitch-key.pitch))/ds;
+  return Math.min(TRAVEL_SPEED,Math.sqrt(LATERAL_ACCELERATION/Math.max(curvature,1e-6)),TURN_RATE/(1.5*Math.max(rotation,1e-6)));
+ });
+ // Propagate braking backwards before a tight corner, then acceleration forwards.
+ // Independent segment durations caused sharp speed dips at the start of turns.
+ for(let i=count-1;i>=0;i--)speeds[i]=Math.min(speeds[i],Math.sqrt(speeds[i+1]**2+2*ACCELERATION*(distances[i+1]-distances[i])));
+ for(let i=1;i<=count;i++)speeds[i]=Math.min(speeds[i],Math.sqrt(speeds[i-1]**2+2*ACCELERATION*(distances[i]-distances[i-1])));
+ for(let i=1;i<=count;i++){
+  const a=keys[i-1],b=keys[i],ds=b.distance-a.distance;
+  const seconds=speeds[i-1]+speeds[i]>0?2*ds/(speeds[i-1]+speeds[i]):Math.max(2*Math.sqrt(ds/ACCELERATION),1.5*Math.hypot(b.yaw-a.yaw,b.pitch-a.pitch)/TURN_RATE);
+  b.time=a.time+seconds;
  }
  const stretch=Math.max(1,1.8/keys.at(-1).time);keys.forEach(key=>{key.time*=stretch;});
- return finishMotion(keys,points,metrics);
+ const motion=finishMotion(keys,points,metrics);
+ // Preserve the planned velocity at joins; estimating it again can overshoot
+ // the acceleration envelope, especially in the first and last intervals.
+ motion.slopes.forEach((slope,i)=>{slope.distance=speeds[i]/stretch;});
+ return motion;
 }
 
+function firstKeyAtOrAfter(keys,seconds){
+ // Motion key times are nondecreasing. Keep the same first matching key and
+ // interpolation arithmetic; only the search cost changes from O(n) to O(log n).
+ let low=0,high=keys.length;
+ while(low<high){const middle=Math.floor((low+high)/2);if(keys[middle].time>=seconds)high=middle;else low=middle+1;}
+ return low<keys.length?low:-1;
+}
 export function sampleCameraMotion(motion,seconds){
  if(seconds>=motion.duration)return {...motion.keys.at(-1),done:true};
- const keys=motion.keys,index=keys.findIndex(k=>k.time>=seconds);
+ const keys=motion.keys,index=firstKeyAtOrAfter(keys,seconds);
  if(index===-1)return {...keys.at(-1),done:true};
  if(index===0)return {...keys[0],done:false};
  const a=keys[index-1],b=keys[index],dt=b.time-a.time,t=clamp((seconds-a.time)/dt,0,1);

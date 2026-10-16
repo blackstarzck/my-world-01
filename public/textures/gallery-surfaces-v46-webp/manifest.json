@@ -1,0 +1,138 @@
+{
+  "version": "reference-surface-v4.6",
+  "format": "RGBA8",
+  "compression": "lossless-webp",
+  "generatorSHA256": "7b492154ccd1aec1abef495fd7985749f74a4d4e83ec98b43e5611f1090e3d20",
+  "frozenSourceSHA256": "2a5fd4f98140c8c1fb9c253be2fc953d24bff5b9e57164a29e472cddd3347ff1",
+  "codec": {
+    "package": "playwright-core",
+    "version": "1.63.0",
+    "file": "webp_codec.wasm",
+    "bytes": 565369,
+    "sha256": "164cd9583a3e4d081f767d3b41ff0a730443dc7535fcc5caff83561463384b79",
+    "sourceBundleSHA256": "549070af3acabb3efcc4f55bfe6210f9f7c2fcf633cf7eaa59bfe60719969171"
+  },
+  "encoder": {
+    "package": "Pillow",
+    "version": "12.2.0",
+    "libwebp": "1.6.0",
+    "lossless": true,
+    "quality": 100,
+    "method": 6,
+    "exact": true
+  },
+  "defaultKinds": [
+    "stone",
+    "limestone-cut",
+    "botanical-floor",
+    "clay-trowel",
+    "jade",
+    "oak"
+  ],
+  "assets": [
+    {
+      "kind": "stone",
+      "size": 512,
+      "file": "stone-512.webp",
+      "bytes": 1048576,
+      "sha256": "f369533f3d217f34c4858b1448d5cb8ceb112233a9d597bf6582c5af28875ba8",
+      "webpBytes": 440794,
+      "webpSha256": "ca50a02bb210cfb75fc2d7bd4e9f6499778ba33766d817167707e5ce004149d2",
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "originalRGBAEqual": true,
+      "pillowRoundTripEqual": true
+    },
+    {
+      "kind": "limestone-cut",
+      "size": 512,
+      "file": "limestone-cut-512.webp",
+      "bytes": 1048576,
+      "sha256": "a2dbd20b2a12344dde79563e256c6f00fbd077ec57cb2c7a5fd1beb99ad0371f",
+      "webpBytes": 427228,
+      "webpSha256": "0d7c0f04fbae053c98782785837097011ecd96b34df02616214fda58ba312c18",
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "originalRGBAEqual": true,
+      "pillowRoundTripEqual": true
+    },
+    {
+      "kind": "botanical-floor",
+      "size": 512,
+      "file": "botanical-floor-512.webp",
+      "bytes": 1048576,
+      "sha256": "220b89d0193b92aabd5da8e295617b75395468b8c44a356293cf3bfc5cd6cbe3",
+      "webpBytes": 283474,
+      "webpSha256": "a6a3ab59eee21e126cb0ad021aaee6f7a513c1d8fddb566e0d0bbbc62c173bb9",
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "originalRGBAEqual": true,
+      "pillowRoundTripEqual": true
+    },
+    {
+      "kind": "clay",
+      "size": 512,
+      "file": "clay-512.webp",
+      "bytes": 1048576,
+      "sha256": "3b8ab6a34062cd8dda2593d714a4bc88a5b2c50b5ac1ffa9ac8df2380b69a8f8",
+      "webpBytes": 454326,
+      "webpSha256": "07ba0e1250801974e5d8afe5fe778e40902c14a761de99fd4a435dfa08d35d1b",
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "originalRGBAEqual": true,
+      "pillowRoundTripEqual": true
+    },
+    {
+      "kind": "clay-trowel",
+      "size": 512,
+      "file": "clay-trowel-512.webp",
+      "bytes": 1048576,
+      "sha256": "e952855d0830f2392ce6541a606e73456db876ae0b60bf895f2c6114b832d6b6",
+      "webpBytes": 405440,
+      "webpSha256": "e73213c287f2cc611675761c9b937619fec5757e64e46ffb3c1a7097413ac6ae",
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "originalRGBAEqual": true,
+      "pillowRoundTripEqual": true
+    },
+    {
+      "kind": "jade",
+      "size": 1024,
+      "file": "jade-1024.webp",
+      "bytes": 4194304,
+      "sha256": "b3e990f60d0957c14b43d154c9a7baa24b1743801b6159c4d759eec5d82671d5",
+      "webpBytes": 811108,
+      "webpSha256": "55dc1350635162efdb800fe1615a4012fcdc23abe0ebfe38bebbf57ab23807fc",
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "originalRGBAEqual": true,
+      "pillowRoundTripEqual": true
+    },
+    {
+      "kind": "oak",
+      "size": 1024,
+      "file": "oak-1024.webp",
+      "bytes": 4194304,
+      "sha256": "e8a1c3069dfd7171cfa1d0d1cb7cf51a101a5f7fda6ab62e150b4a5962e2d3d0",
+      "webpBytes": 952704,
+      "webpSha256": "a8d2ab96b5bb18f31213e3558e6bb3c6edab08b361f06ccd9794310a2c5fce54",
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "originalRGBAEqual": true,
+      "pillowRoundTripEqual": true
+    },
+    {
+      "kind": "foliage",
+      "size": 1024,
+      "file": "foliage-1024.webp",
+      "bytes": 4194304,
+      "sha256": "7597cf4a78a7c42c51dc4c0d3600f6491d1070046325d5400710f8e5581afd1c",
+      "webpBytes": 556074,
+      "webpSha256": "89cd3d9a8b2e3ebb7d055f150d004c5f13b15a9adb023b1accad7125f325e1a2",
+      "alphaMin": 77,
+      "alphaMax": 209,
+      "originalRGBAEqual": true,
+      "pillowRoundTripEqual": true
+    }
+  ]
+}

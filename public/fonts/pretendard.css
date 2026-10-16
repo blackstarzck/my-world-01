@@ -1,0 +1,8 @@
+/* Pretendard v1.3.9 — https://github.com/orioncactus/pretendard (SIL OFL 1.1; see OFL.txt) */
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-style: normal;
+  font-weight: 45 920;
+  font-display: swap;
+  src: url('./PretendardVariable.woff2') format('woff2');
+}

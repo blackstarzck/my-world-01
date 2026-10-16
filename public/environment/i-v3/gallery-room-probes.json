@@ -1,0 +1,88 @@
+{
+  "source": "D:\\workspace\\my-world-01\\assets\\source\\revision-i\\gallery-i-v3.blend",
+  "source_sha256": "52cb406c5528724b29c952f1f530c8691e385822293928294d143c75b30cf30e",
+  "kind": "Actual Cycles linear HDR room-centre reflection probes",
+  "resolution": [
+    512,
+    256
+  ],
+  "samples": 24,
+  "environmentRotationY": 1.5707963267948966,
+  "orientation_evidence": "output/validation/probe-orientation/report.json",
+  "orientation_note": "Same Blender PANO Rx(pi/2), glTF Y-up conversion and Three material rotation as the six-axis verified fixture.",
+  "limitations": "Local room-centre reflection and diffuse IBL approximation; not a GI lightmap or parallax-corrected reflection.",
+  "probes": [
+    {
+      "zone": "C0",
+      "position_blender": [
+        0,
+        0,
+        3.4
+      ],
+      "path": "D:\\workspace\\my-world-01\\public\\environment\\i-v3\\gallery-interior.hdr",
+      "bytes": 392643,
+      "sha256": "2fd83d80058d3d895b2a73de383ad07bb5265a419a5cdf5d93c523f9b4729201",
+      "render_seconds": 11.016026899997087
+    },
+    {
+      "zone": "R1",
+      "position_blender": [
+        -24.89015869776648,
+        -24.890158697766473,
+        3.4
+      ],
+      "path": "D:\\workspace\\my-world-01\\public\\environment\\i-v3\\gallery-r1.hdr",
+      "bytes": 393429,
+      "sha256": "28897ef2fd17d010af46010df149e1f2aa283368e9f5b228846f3d9b54690b2f",
+      "render_seconds": 11.213330799997493
+    },
+    {
+      "zone": "R2",
+      "position_blender": [
+        24.89015869776647,
+        -24.89015869776648,
+        3.4
+      ],
+      "path": "D:\\workspace\\my-world-01\\public\\environment\\i-v3\\gallery-r2.hdr",
+      "bytes": 413920,
+      "sha256": "1b64443694d074dfe2ff577065dd4523b71dab1b5c3af1ced4f3211686e17c1e",
+      "render_seconds": 11.929962200003501
+    },
+    {
+      "zone": "R3",
+      "position_blender": [
+        -24.890158697766473,
+        24.890158697766477,
+        3.4
+      ],
+      "path": "D:\\workspace\\my-world-01\\public\\environment\\i-v3\\gallery-r3.hdr",
+      "bytes": 404488,
+      "sha256": "91770bc645aeb271acd3d46d6eac3ac9fcc36afe22720023a80fb95404a4b7a9",
+      "render_seconds": 12.659368900000118
+    },
+    {
+      "zone": "R4",
+      "position_blender": [
+        24.890158697766477,
+        24.890158697766477,
+        3.4
+      ],
+      "path": "D:\\workspace\\my-world-01\\public\\environment\\i-v3\\gallery-r4.hdr",
+      "bytes": 367276,
+      "sha256": "6a59b8a1f7989b724cf5e46dcccb0bcb70b5872a96a7cce37f3f2dd7b6960a51",
+      "render_seconds": 10.488521999999648
+    }
+  ],
+  "complete": true,
+  "sky": {
+    "path": "D:\\workspace\\my-world-01\\public\\environment\\i-v3\\gallery-sky.hdr",
+    "bytes": 254699,
+    "sha256": "bfdc0e5c3ea01a818d74944411fa9cf2f1a05c77eb9bbd2a5ff01d6b63cf404b",
+    "intensity": 1,
+    "rotation": 1.5707963267948966,
+    "sun_altitude_deg": 68,
+    "sun_azimuth_deg": 135,
+    "note": "Original Multiple Scattering sky at source world strength 0.10; separate Sun is not in the visible sky."
+  },
+  "source_unchanged": true
+}

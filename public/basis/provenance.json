@@ -1,0 +1,25 @@
+{
+  "package": "three",
+  "version": "0.180.0",
+  "source": "node_modules/three/examples/jsm/libs/basis",
+  "workerLimit": 2,
+  "license": "Apache-2.0",
+  "licenseSource": "https://raw.githubusercontent.com/BinomialLLC/basis_universal/master/LICENSE",
+  "licenseSha256": "065fcf48d6af21c0b75e23be5ed5753aee75c892e1c2cf178fa6736305614a5c",
+  "files": [
+    {
+      "name": "basis_transcoder.js",
+      "source": "D:/workspace/my-world-01/node_modules/three/examples/jsm/libs/basis/basis_transcoder.js",
+      "bytes": 57529,
+      "sha256": "8478b5b6d6b74e7d3082b89f6417321d8d1dc0307f2b30d4484bb11b441696a1",
+      "sourceIdentical": true
+    },
+    {
+      "name": "basis_transcoder.wasm",
+      "source": "D:/workspace/my-world-01/node_modules/three/examples/jsm/libs/basis/basis_transcoder.wasm",
+      "bytes": 527333,
+      "sha256": "6cf17dc889352c42e9acf8897107978d127005fe3386c36a0e3845e27967630a",
+      "sourceIdentical": true
+    }
+  ]
+}

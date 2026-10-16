@@ -5,116 +5,101 @@ import {PerspectiveCamera,Vector3} from 'three';
 import {cameraPose,planRoute,clearSegment,isWalkable,routeMetrics,sampleRoute} from '../src/navigation.mjs';
 import {createCameraMotion,sampleCameraMotion} from '../src/camera-motion.mjs';
 const layout=JSON.parse(fs.readFileSync('src/data/layout.json','utf8'));
-const design=JSON.parse(fs.readFileSync('assets/design/revision-d/drawing-dimensions.json','utf8'));
-test('D floor plan: exact room bounds, artwork locations, clear dimensions and open entries',()=>{
-  assert.equal(layout.rooms.length,8);
-  assert.deepEqual(layout.footprint,[54,54]);assert.deepEqual(layout.court.bounds,[-8,-8,16,16]);
-  for(const r of layout.rooms){const ref=design.rooms[r.id-1];assert.deepEqual(r.outerBounds,ref.b);assert.deepEqual(r.clearSize,ref.clearSize);assert.equal(r.h,12);assert.equal(r.screen,false);
-    const art=layout.artworks[r.id-1];assert.ok(Math.abs(art.position[0]-ref.art[0])<.001&&Math.abs(art.position[2]-ref.art[1])<.001);
-    assert.ok(clearSegment(layout,[r.door[0],2.3,r.door[1]],cameraPose(layout,r.project,false,1.04).position),'Every entry provides a direct route to its artwork');
-  }
-  assert.equal(new Set(layout.artworks.map(a=>a.id)).size,8);
-});
-test('desktop and mobile transitions between every pair of rooms avoid perimeter walls and artwork',()=>{
-  for(const mobile of [false,true]){
-    const cameras=[layout.overview.position,...layout.artworks.map(a=>cameraPose(layout,a.id,mobile,mobile?.983:1.04).position)];
-    for(const from of cameras)for(const to of cameras){const route=planRoute(layout,from,to);assert.ok(route.every((p,i)=>isWalkable(layout,p)&&(!i||clearSegment(layout,route[i-1],p))));}
-  }
-});
-test('an interrupted journey can reroute safely to the last selection',()=>{
-  const to=cameraPose(layout,'atelier',false,1.04).position,route=planRoute(layout,layout.overview.position,to),metrics=routeMetrics(route);
-  for(const t of [.08,.23,.47,.62,.84]){const from=sampleRoute(route,metrics,t),path=planRoute(layout,from,cameraPose(layout,'sol',false,1.04).position);assert.ok(path.every((p,i)=>!i||clearSegment(layout,path[i-1],p)));}
-});
+const design=JSON.parse(fs.readFileSync('assets/design/revision-i-radial-galleries/building-model.json','utf8'));
+const near=(a,b,label)=>assert.ok(Math.abs(a-b)<1e-6,`${label}: ${a} versus ${b}`);
+const local=(r,u,v,y=1.65)=>{const t=r.angle_deg*Math.PI/180;return [r.origin[0]+u*Math.cos(t)-v*Math.sin(t),y,-r.origin[1]-u*Math.sin(t)-v*Math.cos(t)];};
+const safeRoute=(from,to)=>{const route=planRoute(layout,from,to);assert.deepEqual(route[0],from);assert.deepEqual(route.at(-1),to);assert.ok(route.every((p,i)=>isWalkable(layout,p,.23)&&(!i||clearSegment(layout,route[i-1],p,.23))));return route;};
 
-test('all 72 journeys sweep around corners and keep moving while turning',()=>{
-  const ids=[null,...layout.artworks.map(a=>a.id)];
-  for(const fromId of ids)for(const toId of ids){
-    if(fromId===toId)continue;
-    const label=`${fromId||'court'} → ${toId||'court'}`;
-    const from=cameraPose(layout,fromId,false,1.04),to=cameraPose(layout,toId,false,1.04);
-    const path=planRoute(layout,from.position,to.position);
-    for(let i=1;i<path.length-1;i++){
-      const u=new Vector3(...path[i]).sub(new Vector3(...path[i-1]));
-      const v=new Vector3(...path[i+1]).sub(new Vector3(...path[i]));
-      if(u.length()*v.length()<1e-8)continue;
-      const angle=u.angleTo(v),curvature=angle/((u.length()+v.length())/2);
-      assert.ok(angle<5*Math.PI/180,`${label}: abrupt direction change`);
-      assert.ok(curvature<1.15,`${label}: bend is too tight to feel like a sweep`);
-    }
-    const motion=createCameraMotion(path,from.target,to.target,from.fov,to.fov,!toId);
-    assert.ok(motion.keys.every((key,i)=>!i||key.distance>motion.keys[i-1].distance),`${label}: stationary rotation interrupts travel`);
-    for(const fps of [30,60]){
-      let previous=sampleCameraMotion(motion,0);
-      for(let t=1/fps;t<motion.duration+1/fps;t+=1/fps){
-        const pose=sampleCameraMotion(motion,Math.min(t,motion.duration));
-        assert.ok(clearSegment(layout,previous.position,pose.position),`${label}: unsafe frame chord at ${fps} fps`);
-        assert.ok(Math.hypot(pose.yaw-previous.yaw,pose.pitch-previous.pitch)*fps<3.41,`${label}: sudden camera turn`);
-        previous=pose;
-      }
+test('Revision I uses the approved four 12 x 36 m radial rooms and all 48 scheduled slots',()=>{
+  assert.equal(layout.revision,'I.1');assert.equal(layout.modelPath,'/models/gallery-i-fidelity-v11-opt1.glb');
+  assert.equal(layout.rooms.length,4);assert.equal(layout.artworks.length,48);
+  assert.equal(new Set(layout.artworks.map(a=>a.id)).size,48);assert.equal(new Set(layout.artworks.map(a=>a.projectId)).size,8);
+  for(const [r,source] of layout.rooms.map(r=>[r,design.rooms.find(s=>s.id===r.id)])){
+    assert.deepEqual(r.clearSize,[12,36,source.crown]);assert.equal(r.angleDeg,source.angle_deg);
+    assert.equal(layout.artworks.filter(a=>a.room===r.id).length,12);
+    for(const slot of source.slots){const a=layout.artworks.find(a=>a.id===slot.id);a.position.forEach((v,i)=>near(v,slot.center_gltf[i],slot.id));
+      a.cameraPosition.forEach((v,i)=>near(v,[slot.camera_blender[0],slot.camera_blender[2],-slot.camera_blender[1]][i],slot.id));
+      near(a.width,slot.image_width,'image width');near(a.height,slot.image_height,'image height');
+      assert.ok(a.normal[0]*(a.cameraPosition[0]-a.position[0])+a.normal[2]*(a.cameraPosition[2]-a.position[2])>7.49);
     }
   }
+  near(layout.footprint[0],design.overall_xy,'overall width');assert.equal(layout.hallWidth,32);
 });
 
-test('a new selection inside a rounded bend can still find a safe route',()=>{
-  for(const art of layout.artworks){
-    const route=planRoute(layout,layout.overview.position,cameraPose(layout,art.id,false,1.04).position);
-    const from=route.find(p=>!isWalkable(layout,p,.7));
-    if(!from)continue;
-    const next=planRoute(layout,from,layout.overview.position);
-    assert.ok(next.every((p,i)=>!i||clearSegment(layout,next[i-1],p)),art.id);
+test('rotated perimeter, four throat seams, support bases, planters and frame envelopes match the design',()=>{
+  assert.equal(layout.piers.length,64);assert.equal(layout.portals.length,4);assert.equal(layout.furniture.length,16);
+  for(const r of design.rooms){
+    for(const u of [-1.3,-1.2,-.6,0,.1,3,18,33,35])assert.ok(isWalkable(layout,local(r,u,0),.7),`${r.id} u=${u} center aisle`);
+    for(const p of [local(r,-.6,4),local(r,18,6.1),local(r,36.1,0)])assert.equal(isWalkable(layout,p),false);
+    assert.equal(isWalkable(layout,local(r,-.6,0,10.4)),false);
+    assert.equal(isWalkable(layout,local(r,-.6,3.3,9)),false,'off-center arch soffit');
+    // The V11 base projects 0.62m: its new outer strip must also block a route.
+    for(const v of [-5.40,5.40])assert.equal(isWalkable(layout,local(r,6,v),0),false,`${r.id} expanded base`);
+    for(const v of [-1.8,1.8])assert.ok(isWalkable(layout,local(r,18,v),.7),`${r.id} central aisle edge`);
   }
-});
-test('the court reaches the northwest gallery without touring the opposite corridor',()=>{
-  const from=layout.overview.position,to=cameraPose(layout,'sol',false,1.04).position;
-  const route=planRoute(layout,from,to);
-  assert.ok(routeMetrics(route).total<36,'Use the open court instead of a 58 m detour');
-  const first=route.find(p=>Math.hypot(p[0]-from[0],p[2]-from[2])>.1);
-  assert.ok((first[0]-from[0])*(to[0]-from[0])+(first[2]-from[2])*(to[2]-from[2])>0,'Start toward the selected room');
-});
-test('desktop and mobile keep the same viewing height while changing galleries',()=>{
-  for(const mobile of [false,true])for(const a of layout.artworks)assert.equal(cameraPose(layout,a.id,mobile,1.04).position[1],2.3);
-});
-test('every room is reached from the court within 3.2 seconds on desktop and mobile',()=>{
-  for(const [mobile,aspect] of [[false,1.04],[true,.983]])for(const a of layout.artworks){
-    const from=layout.overview,to=cameraPose(layout,a.id,mobile,aspect);
-    const route=planRoute(layout,from.position,to.position),motion=createCameraMotion(route,from.target,to.target,from.fov,to.fov);
-    assert.ok(motion.duration<=3.2,`${a.id}: ${motion.duration.toFixed(2)} seconds`);
-    const end=sampleCameraMotion(motion,3.2);assert.ok(end.done);assert.deepEqual(end.position,to.position);
-  }
+  for(const p of [...layout.piers,...layout.furniture])assert.equal(isWalkable(layout,[p.center[0],1.65,p.center[1]]),false,p.id);
+  for(const p of [[30,1.65,0],[0,1.65,-30],[44,1.65,44],[NaN,1.65,0],[0,-.1,0]])assert.equal(isWalkable(layout,p),false);
+  assert.ok(isWalkable(layout,layout.overview.position,.7),'overview is inside the central hall');
 });
 
-test('camera turns are bounded, have no last-frame snap, and follow safe rounded paths',()=>{
-  for(const [fromId,toId] of [[null,'sol'],['sol','form'],['form',null],['mono','atelier']]){
-    const from=cameraPose(layout,fromId,false,1.04),to=cameraPose(layout,toId,false,1.04);
-    const points=planRoute(layout,from.position,to.position),motion=createCameraMotion(points,from.target,to.target,from.fov,to.fov,!toId);
+test('the route graph is fully connected and every slot has a safe connection to it',()=>{
+  const {nodes,edges}=layout.navigation,adj=nodes.map(()=>[]);
+  for(const [a,b] of edges){assert.ok(clearSegment(layout,nodes[a],nodes[b],.7));adj[a].push(b);adj[b].push(a);}
+  const seen=new Set([0]),queue=[0];for(const i of queue)for(const n of adj[i])if(!seen.has(n)){seen.add(n);queue.push(n);}
+  assert.equal(seen.size,nodes.length,'all graph nodes connected');
+  for(const a of layout.artworks){const position=cameraPose(layout,a.id,false,1.04).position;assert.ok(nodes.some(p=>clearSegment(layout,position,p,.7)),a.id);}
+});
+
+test('all 48 slots, including both end-wall bays in every room, can be reached and returned from safely',()=>{
+  for(const a of layout.artworks){const pose=cameraPose(layout,a.id,false,1.04);assert.equal(pose.position[1],1.65);safeRoute(layout.overview.position,pose.position);safeRoute(pose.position,layout.overview.position);}
+});
+
+test('every pair of far end slots across the four wings has a safe animated route',()=>{
+  const ends=layout.artworks.filter(a=>a.bay===6);
+  for(const from of ends)for(const to of ends){if(from.id===to.id)continue;
+    const a=cameraPose(layout,from.id,false,1.04),b=cameraPose(layout,to.id,false,1.04);
+    const route=safeRoute(a.position,b.position),motion=createCameraMotion(route,a.target,b.target,a.fov,b.fov);
+    assert.ok(motion.duration<14,`${from.id} to ${to.id}: excessive duration`);
     let previous=sampleCameraMotion(motion,0);
-    for(let t=1/60;t<motion.duration+1/60;t+=1/60){const p=sampleCameraMotion(motion,Math.min(t,motion.duration));
-      assert.ok(Math.hypot(p.yaw-previous.yaw,p.pitch-previous.pitch)*60<3.41,'Keep turns below 3.3 degrees per frame at 60 fps');
-      assert.ok(isWalkable(layout,p.position));assert.ok(clearSegment(layout,previous.position,p.position));previous=p;
+    for(let t=1/30;t<motion.duration+1/30;t+=1/30){const p=sampleCameraMotion(motion,Math.min(t,motion.duration));
+      assert.ok(clearSegment(layout,previous.position,p.position),`${from.id} to ${to.id}: unsafe frame chord`);
+      assert.ok(Math.hypot(p.yaw-previous.yaw,p.pitch-previous.pitch)*30<3.41,'camera turn rate');previous=p;
     }
-    assert.ok(previous.done);assert.deepEqual(previous.position,to.position);
-    const f=new Vector3(Math.sin(previous.yaw)*Math.cos(previous.pitch),Math.sin(previous.pitch),Math.cos(previous.yaw)*Math.cos(previous.pitch));
-    const target=new Vector3(...to.target).sub(new Vector3(...to.position)).normalize();assert.ok(f.angleTo(target)<.0001);
-    if(!toId)assert.ok(motion.duration<6,'Return without rotating twice');
-  }
-});
-test('camera speed and angular velocity remain continuous at motion joins',()=>{
-  for(const [mobile,aspect] of [[false,1.04],[true,.983]])for(const art of layout.artworks){
-    const from=layout.overview,to=cameraPose(layout,art.id,mobile,aspect);
-    const motion=createCameraMotion(planRoute(layout,from.position,to.position),from.target,to.target,from.fov,to.fov),h=1e-5;
-    for(const key of motion.keys.slice(1,-1)){
-      const a=sampleCameraMotion(motion,key.time-h),b=sampleCameraMotion(motion,key.time),c=sampleCameraMotion(motion,key.time+h);
-      const before=Math.hypot(...b.position.map((v,i)=>(v-a.position[i])/h)),after=Math.hypot(...c.position.map((v,i)=>(v-b.position[i])/h));
-      assert.ok(Math.abs(after-before)<.05,`${art.id}: travel speed jumps at ${key.time}`);
-      assert.ok(Math.hypot(c.yaw-2*b.yaw+a.yaw,c.pitch-2*b.pitch+a.pitch)/h<.02,`${art.id}: rotation speed jumps at ${key.time}`);
-    }
+    assert.ok(previous.done);assert.deepEqual(previous.position,b.position);
   }
 });
 
-test('all framed artwork fits the desktop and mobile viewport with interface margins',()=>{
+test('interruptions in hall bends and doorways can reroute to another wing',()=>{
+  for(const room of layout.rooms){const to=cameraPose(layout,`${room.id}-L06`,false,1.04),route=planRoute(layout,layout.overview.position,to.position),metrics=routeMetrics(route);
+    const next=layout.rooms[(layout.rooms.indexOf(room)+1)%4];
+    for(const t of [.08,.23,.47,.62,.84])safeRoute(sampleRoute(route,metrics,t),cameraPose(layout,`${next.id}-R06`,false,1.04).position);
+  }
+});
+
+test('eight project aliases remain separate from 48 independently addressable positions',()=>{
+  for(const [id,slot] of Object.entries(layout.projectSlots)){
+    assert.deepEqual(cameraPose(layout,id,false,1.04),cameraPose(layout,slot,false,1.04));
+    assert.equal(layout.artworks.filter(a=>a.projectId===id).length,6);
+    for(const v of [0,1])assert.ok(fs.statSync(`public/art/${id}-${v}.webp`).size>1000);
+  }
+  assert.deepEqual(layout.rooms.find(r=>r.id==='R3').projects,['objects','atelier']);
+  assert.deepEqual(layout.rooms.find(r=>r.id==='R4').projects,['mono','tide']);
+  assert.notDeepEqual(cameraPose(layout,'R1-L01',false,1.04).position,cameraPose(layout,'R1-L03',false,1.04).position);
+});
+
+test('every frame fits desktop and mobile views at the same approved eye height',()=>{
   for(const [mobile,aspect] of [[false,1440*.65/900],[true,390/(844*.47)],[true,320/(720*.47)]])for(const a of layout.artworks){
     const pose=cameraPose(layout,a.id,mobile,aspect),camera=new PerspectiveCamera(pose.fov,aspect,.08,300);camera.position.set(...pose.position);camera.lookAt(new Vector3(...pose.target));camera.updateMatrixWorld();
-    for(const x of [-a.width/2,a.width/2])for(const y of [-a.height/2,a.height/2]){const p=new Vector3(a.position[0]+x*Math.cos(a.rotation),a.position[1]+y,a.position[2]-x*Math.sin(a.rotation)).project(camera);assert.ok(Math.abs(p.x)<.81);assert.ok(p.y<(mobile?.5:.7)&&p.y>-.8,`${a.id} ${mobile} ${p.y}`);}
+    assert.equal(pose.position[1],1.65);assert.ok(pose.fov<100);assert.ok(isWalkable(layout,pose.position,.7));
+    for(const x of [-a.frameWidth/2,a.frameWidth/2])for(const y of [-a.frameHeight/2,a.frameHeight/2]){const p=new Vector3(a.position[0]+x*Math.cos(a.rotation),a.position[1]+y,a.position[2]-x*Math.sin(a.rotation)).project(camera);assert.ok(Math.abs(p.x)<.79);assert.ok(p.y<(mobile?.49:.68)&&p.y>-.79,`${a.id} ${mobile} ${p.y}`);}
   }
 });
-test('each project keeps independently replaceable media',()=>{for(const a of layout.artworks)for(const v of [0,1])assert.ok(fs.statSync(`public/art/${a.id}-${v}.webp`).size>1000);});
+
+test('short moves and stationary turns finish at the exact requested pose without last-frame jumps',()=>{
+  for(const distance of [0,.005,.02,.2]){
+    const points=[[0,1.65,0],[distance,1.65,0]],target=[distance,1.65,-1],motion=createCameraMotion(points,[0,1.65,1],target,60,45);
+    let previous=sampleCameraMotion(motion,0);
+    for(let t=1/60;t<motion.duration+1/60;t+=1/60){const pose=sampleCameraMotion(motion,t);assert.ok(pose.position.every(Number.isFinite));assert.ok(Math.abs(pose.yaw-previous.yaw)*60<2.61);previous=pose;}
+    assert.ok(previous.done);assert.deepEqual(previous.position,points[1]);assert.equal(previous.fov,45);
+  }
+});

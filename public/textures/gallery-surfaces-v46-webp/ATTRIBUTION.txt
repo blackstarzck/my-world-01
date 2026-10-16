@@ -1,0 +1,6 @@
+Codec: webp_codec.wasm from Microsoft playwright-core 1.63.0, without binary modification.
+Source: https://github.com/microsoft/playwright/tree/v1.63.0/packages/utils/webp
+Playwright copyright Microsoft Corporation, Apache-2.0.
+WebP codec includes libwebp, copyright Google Inc.; see licenses/libwebp-COPYING.txt and PATENTS.
+Host adapter is version-specific and does not import Playwright at runtime.
+WASM SHA-256: 164cd9583a3e4d081f767d3b41ff0a730443dc7535fcc5caff83561463384b79
