@@ -34,6 +34,7 @@
       "dest": "/models/gallery-i-fidelity-v11-opt1.glb",
       "headers": {
         "Content-Type": "model/gltf-binary",
+        "Content-Encoding": "identity",
         "Vary": "Accept-Encoding",
         "Cache-Control": "public, max-age=31536000, immutable, no-transform"
       }
@@ -81,6 +82,7 @@
       "dest": "/environment/i-v3/gallery-interior.hdr",
       "headers": {
         "Content-Type": "application/octet-stream",
+        "Content-Encoding": "identity",
         "Vary": "Accept-Encoding",
         "Cache-Control": "public, max-age=0, must-revalidate, no-transform"
       }
@@ -128,6 +130,7 @@
       "dest": "/environment/i-v3/gallery-r1.hdr",
       "headers": {
         "Content-Type": "application/octet-stream",
+        "Content-Encoding": "identity",
         "Vary": "Accept-Encoding",
         "Cache-Control": "public, max-age=0, must-revalidate, no-transform"
       }
@@ -175,6 +178,7 @@
       "dest": "/environment/i-v3/gallery-r2.hdr",
       "headers": {
         "Content-Type": "application/octet-stream",
+        "Content-Encoding": "identity",
         "Vary": "Accept-Encoding",
         "Cache-Control": "public, max-age=0, must-revalidate, no-transform"
       }
@@ -222,6 +226,7 @@
       "dest": "/environment/i-v3/gallery-r3.hdr",
       "headers": {
         "Content-Type": "application/octet-stream",
+        "Content-Encoding": "identity",
         "Vary": "Accept-Encoding",
         "Cache-Control": "public, max-age=0, must-revalidate, no-transform"
       }
@@ -269,6 +274,7 @@
       "dest": "/environment/i-v3/gallery-r4.hdr",
       "headers": {
         "Content-Type": "application/octet-stream",
+        "Content-Encoding": "identity",
         "Vary": "Accept-Encoding",
         "Cache-Control": "public, max-age=0, must-revalidate, no-transform"
       }
@@ -316,6 +322,7 @@
       "dest": "/environment/i-v3/gallery-sky.hdr",
       "headers": {
         "Content-Type": "application/octet-stream",
+        "Content-Encoding": "identity",
         "Vary": "Accept-Encoding",
         "Cache-Control": "public, max-age=0, must-revalidate, no-transform"
       }
