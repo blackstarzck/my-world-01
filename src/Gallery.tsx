@@ -31,7 +31,7 @@ import { projects } from './data/projects';
 import { cameraPose, planRoute } from './navigation.mjs';
 import { createCameraMotion, sampleCameraMotion } from './camera-motion.mjs';
 
-type Props = { selected: string | null; selectedSlot: string | null; mediaIndex: number; playing: boolean; retry: number; reduced: boolean; mobile: boolean; reset: number; onSelect: (id:string,slotId?:string)=>void; onReady:()=>void; onMediaError:(error:boolean)=>void; onVideoEnd:()=>void; onFailure:()=>void };
+type Props = { selected: string | null; selectedSlot: string | null; mediaIndex: number; playing: boolean; retry: number; reduced: boolean; mobile: boolean; reset: number; onSelect: (id:string,slotId?:string)=>void; onReady:()=>void; onLoadingStage:(stage:'lighting'|'finishing')=>void; onMediaError:(error:boolean)=>void; onVideoEnd:()=>void; onFailure:()=>void };
 RectAreaLightUniformsLib.init();
 void preloadGallerySurfacePixels();
 const projectById=new Map(projects.map(p=>[p.id,p]));
@@ -86,7 +86,7 @@ class SceneBoundary extends Component<{children:ReactNode; onError:()=>void},{er
   render(){return this.state.error?null:this.props.children;}
 }
 
-const Building=memo(function Building({onReady,onFailure,onLighting,onLightingModel,onEnvironment,onEnvironmentRotation,onSky,onReflectionMaterials}:{onReady:()=>void;onFailure:()=>void;onLighting:(baked:boolean)=>void;onLightingModel:(model:AuthoredLightingModel)=>void;onEnvironment:(url:string|null)=>void;onEnvironmentRotation:(rotationY:number)=>void;onSky:(settings:SkySettings|null)=>void;onReflectionMaterials:(materials:MeshStandardMaterial[])=>void}) {
+const Building=memo(function Building({onReady,onLoadingStage,onFailure,onLighting,onLightingModel,onEnvironment,onEnvironmentRotation,onSky,onReflectionMaterials}:{onReady:()=>void;onLoadingStage:(stage:'lighting'|'finishing')=>void;onFailure:()=>void;onLighting:(baked:boolean)=>void;onLightingModel:(model:AuthoredLightingModel)=>void;onEnvironment:(url:string|null)=>void;onEnvironmentRotation:(rotationY:number)=>void;onSky:(settings:SkySettings|null)=>void;onReflectionMaterials:(materials:MeshStandardMaterial[])=>void}) {
   const {gl,camera,invalidate,scene:renderScene}=useThree();
   const configureGLTF=useCallback((loader:GLTFLoader)=>{
     galleryStage('model-loader-configured');
@@ -171,7 +171,7 @@ const Building=memo(function Building({onReady,onFailure,onLighting,onLightingMo
   },[scene,environmentURL,environmentRotationY,sky,lightingModel,ownedMaterials,onReady,onLighting,onLightingModel,onEnvironment,onEnvironmentRotation,onSky,onReflectionMaterials,renderScene,gl,invalidate]);
   return <><primitive object={scene} dispose={null} onClick={(e:ThreeEvent<MouseEvent>)=>e.stopPropagation()} />
     <GalleryRuntimeOptimizations layout={layout} resetKey={scene.uuid}/>
-    <GallerySceneReady textures={surface.textures} resetKey={scene.uuid} onReady={()=>{galleryStage('loading-ui-dismissed');onReady();}} onFailure={onFailure}/>
+    <GallerySceneReady onLoadingStage={onLoadingStage} textures={surface.textures} resetKey={scene.uuid} onReady={()=>{galleryStage('loading-ui-dismissed');onReady();}} onFailure={onFailure}/>
   </>;
 });
 
@@ -330,7 +330,7 @@ function Gallery(props:Props) {
   // default framebuffer only receives its fullscreen output quad.
   return <SceneBoundary onError={props.onFailure}><Canvas frameloop="demand" shadows="soft" resize={{debounce:0}} dpr={[1,props.mobile?1.25:1.5]} camera={{position:layout.overview.position as [number,number,number],fov:layout.overview.fov,near:.08,far:250}} gl={{antialias:false,alpha:false,powerPreference:'high-performance',toneMapping:AgXToneMapping,toneMappingExposure:.82}} onCreated={({gl})=>{gl.setClearColor('#dce6ed');gl.shadowMap.type=PCFSoftShadowMap;gl.shadowMap.autoUpdate=false;gl.shadowMap.needsUpdate=true;}}>
     {!(baked&&environmentURL&&lightingModel==='baked-diffuse-probes')?<GalleryLight materials={reflectionMaterials}/>:null}
-    <Suspense fallback={null}><Building onReady={props.onReady} onFailure={props.onFailure} onLighting={setBaked} onLightingModel={setLightingModel} onEnvironment={setEnvironmentURL} onEnvironmentRotation={setEnvironmentRotationY} onSky={setSky} onReflectionMaterials={setReflectionMaterials}/>{layout.artworks.map((a,index)=>{
+    <Suspense fallback={null}><Building onReady={props.onReady} onLoadingStage={props.onLoadingStage} onFailure={props.onFailure} onLighting={setBaked} onLightingModel={setLightingModel} onEnvironment={setEnvironmentURL} onEnvironmentRotation={setEnvironmentRotationY} onSky={setSky} onReflectionMaterials={setReflectionMaterials}/>{layout.artworks.map((a,index)=>{
       const active=props.selected===a.projectId&&a.id===(props.selectedSlot??layout.projectSlots[a.projectId as keyof typeof layout.projectSlots]);
       return <Artwork key={a.id} index={index} active={active} hasSelection={props.selected!==null} mediaIndex={active?props.mediaIndex:0} playing={active&&props.playing} retry={props.retry} onSelect={props.onSelect} onMediaError={props.onMediaError} onVideoEnd={props.onVideoEnd}/>;
     })}</Suspense>

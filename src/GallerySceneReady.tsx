@@ -7,6 +7,7 @@ import type { GalleryEffectPreparation } from './GalleryEffectPreparation.mjs';
 
 type Props = {
   onReady: () => void;
+  onLoadingStage?: (stage: 'lighting' | 'finishing') => void;
   onFailure: (error?: Error) => void;
   /** Custom shader textures (for example surface.textures), not visible as material map properties. */
   textures?: readonly Texture[];
@@ -104,10 +105,10 @@ function snapshot(scene: Scene, camera: Camera, gl: WebGLRenderer, customTexture
 }
 
 /** Final-scene preparation only. The caller must gate main/effect/reflection rendering until renderReady === true. */
-export function GallerySceneReady({ onReady, onFailure, textures = emptyTextures, resetKey, expectedArtworkCount = 48, timeoutMs = 120_000 }: Props) {
+export function GallerySceneReady({ onReady, onLoadingStage, onFailure, textures = emptyTextures, resetKey, expectedArtworkCount = 48, timeoutMs = 120_000 }: Props) {
   const { gl, scene, camera, invalidate } = useThree();
-  const current = useRef({ onReady, onFailure, textures });
-  useLayoutEffect(() => { current.current = { onReady, onFailure, textures }; }, [onReady, onFailure, textures]);
+  const current = useRef({ onReady, onLoadingStage, onFailure, textures });
+  useLayoutEffect(() => { current.current = { onReady, onLoadingStage, onFailure, textures }; }, [onReady, onLoadingStage, onFailure, textures]);
 
   useLayoutEffect(() => {
     let live = true;
@@ -154,7 +155,9 @@ export function GallerySceneReady({ onReady, onFailure, textures = emptyTextures
       previous.durationMs = now - previous.startMs;
       preparationTiming.phases.push({ state, startMs: now, durationMs: 0 });
       diagnostic.state = state;
+      if (state === 'uploading') current.current.onLoadingStage?.('finishing');
     };
+    current.current.onLoadingStage?.('lighting');
     scene.userData.renderReadyOwner = owner;
     scene.userData.renderReady = false;
     scene.userData.sceneReadiness = diagnostic;

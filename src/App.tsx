@@ -2,6 +2,8 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, ArrowLeft, ArrowRight, X, Grid2X2, RotateCcw, MoveHorizontal, Play, Pause, Copy, Check, Volume2 } from 'lucide-react';
 import { projects, profile } from './data/projects';
 import MuseumMap from './MuseumMap';
+import GalleryLoading from './GalleryLoading';
+import type { LoadingStage } from './GalleryLoading';
 import layout from './data/layout.json';
 import { galleryReviewEnabled } from './gallery-diagnostics';
 const Gallery=lazy(()=>import('./Gallery'));
@@ -20,6 +22,7 @@ export default function App(){
   const [selectedSlot,setSelectedSlot]=useState<string|null>(()=>selectionFromURL().slot);
   const [mediaIndex,setMediaIndex]=useState(0),[playing,setPlaying]=useState(false),[mediaError,setMediaError]=useState(false),[retry,setRetry]=useState(0);
   const [ready,setReady]=useState(false),[flat,setFlat]=useState(()=>new URLSearchParams(location.search).get('view')==='flat'||!hasWebGL());
+  const [loadingStage,setLoadingStage]=useState<LoadingStage>('space');
   const [sceneKey,setSceneKey]=useState(0),[reset,setReset]=useState(0),[copied,setCopied]=useState(false);
   const [sheet,setSheet]=useState<'about'|'index'|null>(null);
   const mobile=useMedia('(max-width: 899px)'),reduced=useMedia('(prefers-reduced-motion: reduce)');
@@ -36,24 +39,30 @@ export default function App(){
   },[]);
   const step=useCallback((delta:number)=>{const current=projects.findIndex(p=>p.id===selected);open(projects[(current+delta+projects.length)%projects.length].id);},[selected,open]);
   const onReady=useCallback(()=>setReady(true),[]),onFailure=useCallback(()=>setFlat(true),[]),onVideoEnd=useCallback(()=>setPlaying(false),[]);
+  const onLoadingStage=useCallback((stage:'lighting'|'finishing')=>setLoadingStage(previous=>previous==='finishing'?previous:stage),[]);
   useEffect(()=>{const changed=()=>{const next=selectionFromURL();setSelected(next.project);setSelectedSlot(next.slot);};window.addEventListener('popstate',changed);window.addEventListener('hashchange',changed);return()=>{window.removeEventListener('popstate',changed);window.removeEventListener('hashchange',changed);};},[]);
   useEffect(()=>{setMediaIndex(0);setPlaying(false);setMediaError(false);setCopied(false);document.title=selected?`${projects.find(p=>p.id===selected)?.title} — STILL`:'STILL — A space for ideas';
-    if(selected){lastSelected.current=selected;requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}));}
-    else if(lastSelected.current){requestAnimationFrame(()=>document.getElementById(`project-${lastSelected.current}`)?.focus({preventScroll:true}));}
   },[selected]);
+  useEffect(()=>{
+    if(!ready&&!flat)return;
+    const frame=requestAnimationFrame(()=>{
+      if(selected){lastSelected.current=selected;heading.current?.focus({preventScroll:true});}
+      else if(lastSelected.current){document.getElementById(`project-${lastSelected.current}`)?.focus({preventScroll:true});}
+    });
+    return()=>cancelAnimationFrame(frame);
+  },[selected,ready,flat]);
   useEffect(()=>{setPlaying(false);setMediaError(false);},[mediaIndex]);
   useEffect(()=>{const d=dialog.current;if(sheet&&!d?.open)d?.showModal();else if(!sheet&&d?.open)d.close();},[sheet]);
-  useEffect(()=>{const key=(e:KeyboardEvent)=>{if(sheet||!selected||(e.target as HTMLElement).matches('input,textarea,select,[contenteditable]'))return;
+  useEffect(()=>{const key=(e:KeyboardEvent)=>{if((!ready&&!flat)||sheet||!selected||(e.target as HTMLElement).matches('input,textarea,select,[contenteditable]'))return;
     if(e.key==='Escape'){e.preventDefault();open(null);}if(e.key==='ArrowLeft'){e.preventDefault();step(-1);}if(e.key==='ArrowRight'){e.preventDefault();step(1);}
-  };window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);},[selected,step,open,sheet]);
+  };window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);},[selected,step,open,sheet,ready,flat]);
   const share=async()=>{try{await navigator.clipboard.writeText(location.href);setCopied(true);}catch{setCopied(false);}};
-  const retryScene=async()=>{const gallery=await import('./Gallery');gallery.clearGalleryCache();setReady(false);setSceneKey(k=>k+1);setFlat(false);};
-  return <main className={`${selected?'is-detail':''} ${flat?'is-flat':''}`}>
-    <a className="skip-link" href={selected?'#project-title':'#project-navigation'}>{selected?'작품 설명으로 이동':'작품 목록으로 이동'}</a>
-    <div className="gallery-viewport" aria-label={selected?`${project.title} 작품 미리보기`:'3D 포트폴리오 전시장'}>
+  const retryScene=async()=>{const gallery=await import('./Gallery');gallery.clearGalleryCache();setLoadingStage('space');setReady(false);setSceneKey(k=>k+1);setFlat(false);};
+  return <main className={`${selected?'is-detail':''} ${flat?'is-flat':''} ${!ready&&!flat?'is-loading':''}`}>
+    <a className="skip-link" inert={!ready&&!flat} href={selected?'#project-title':'#project-navigation'}>{selected?'작품 설명으로 이동':'작품 목록으로 이동'}</a>
+    <div className="gallery-viewport" inert={!ready&&!flat} aria-label={selected?`${project.title} 작품 미리보기`:'3D 포트폴리오 전시장'}>
       {flat?<div className="flat-scene" style={{backgroundImage:'url(/gallery-i-poster.webp)'}}>{selected?<div className="flat-art">{media?.type==='video'?<video key={media.src} src={media.src} controls playsInline onError={()=>setMediaError(true)}/>:<img key={`${media?.src}-${retry}`} src={media?.src} alt={media?.alt} onError={()=>setMediaError(true)}/>}</div>:null}</div>:
-      <Suspense fallback={null}><Gallery key={sceneKey} selected={selected} selectedSlot={selectedSlot} mediaIndex={mediaIndex} playing={playing} retry={retry} reduced={reduced} mobile={mobile} reset={reset} onSelect={open} onReady={onReady} onMediaError={setMediaError} onVideoEnd={onVideoEnd} onFailure={onFailure}/></Suspense>}
-      {!ready&&!flat?<div className="loading" role="status"><span className="loading-mark">s.</span><p>전시장의 빛을 불러오는 중</p><button onClick={()=>setFlat(true)}>이미지로 먼저 둘러보기 <ArrowUpRight size={14}/></button></div>:null}
+      <Suspense fallback={null}><Gallery key={sceneKey} selected={selected} selectedSlot={selectedSlot} mediaIndex={mediaIndex} playing={playing} retry={retry} reduced={reduced} mobile={mobile} reset={reset} onSelect={open} onReady={onReady} onLoadingStage={onLoadingStage} onMediaError={setMediaError} onVideoEnd={onVideoEnd} onFailure={onFailure}/></Suspense>}
       {selected?<div className="preview-label"><span className="tiny-dot"/> IN THE MUSEUM <span className="preview-number">{String(activeIndex+1).padStart(2,'0')} / 08</span></div>:null}
       {selected?<div className="media-bar" aria-label="작품 미리보기 조작">
         {media?.type==='video'&&!flat?<button className="round small" aria-label={playing?'영상 일시 정지':'영상 재생'} onClick={()=>setPlaying(v=>!v)}>{playing?<Pause size={15}/>:<Play size={15}/>}</button>:null}
@@ -63,6 +72,8 @@ export default function App(){
       </div>:null}
       {mediaError?<div className="media-error" role="alert">미디어를 불러오지 못했습니다.<button onClick={()=>setRetry(n=>n+1)}>다시 불러오기 <RotateCcw size={13}/></button></div>:null}
     </div>
+    {!flat?<GalleryLoading key={sceneKey} ready={ready} stage={loadingStage} reduced={reduced} onSkip={()=>setFlat(true)}/>:null}
+    <div className="gallery-interface" inert={!ready&&!flat}>
     <header className="site-header">
       <button className="wordmark" aria-label="STILL 전체 전시 보기" onClick={()=>{open(null);setReset(n=>n+1);}}>still<span>.</span></button>
       <nav aria-label="메인 메뉴"><button className="index-button" aria-label="프로젝트 목록 열기" onClick={()=>setSheet('index')}><Grid2X2 size={14}/><span>프로젝트</span><sup>08</sup></button><button onClick={()=>setSheet('about')}>소개 · 연락 <ArrowUpRight size={14}/></button></nav>
@@ -96,11 +107,12 @@ export default function App(){
       </aside>
     </>}
     {flat?<div className="flat-notice">이미지 관람 모드 <button onClick={retryScene}>3D 다시 시도</button></div>:null}
-    <span className="sr-only" role="status">{selected?`${project.title}, ${activeIndex+1}번째 작품. 좌우 방향키로 작품 이동, Escape로 닫기.`:'전체 전시를 보고 있습니다.'}</span>
+    <span className="sr-only" role="status">{!ready&&!flat?'':selected?`${project.title}, ${activeIndex+1}번째 작품. 좌우 방향키로 작품 이동, Escape로 닫기.`:'전체 전시를 보고 있습니다.'}</span>
     <dialog ref={dialog} className="info-dialog" aria-label={sheet==='index'?'프로젝트 목록':'전시 소개와 연락처'} onCancel={()=>setSheet(null)} onClose={()=>setSheet(null)}>
       <div className="dialog-header"><span>{sheet==='index'?'THE COLLECTION':'ABOUT THIS SPACE'}</span><button className="round small" onClick={()=>setSheet(null)} aria-label="창 닫기"><X size={19}/></button></div>
       {sheet==='index'?<><h2>Selected works<span>08</span></h2><MuseumMap onSelect={open}/><div className="index-list">{projects.map((p,i)=><button key={p.id} onClick={()=>open(p.id)}><span>{String(i+1).padStart(2,'0')}</span><img src={`/art/${p.id}-thumb.webp`} alt=""/><span><strong>{p.title}</strong><small>{p.category}</small></span><ArrowUpRight size={20}/></button>)}</div></>:<><p className="eyebrow">A SPACE FOR IDEAS</p><h2>조금 더 오래,<br/><em>머무는 작업.</em></h2><p>{profile.description}</p><p>{profile.about}</p><div className="contact-block"><span>LET’S MAKE SOMETHING.</span>{profile.email?<a href={`mailto:${profile.email}`}>{profile.email} <ArrowUpRight size={18}/></a>:<p>연락처 준비 중 <small>실제 소개와 이메일을 넣을 자리입니다.</small></p>}</div><p className="dialog-help">작품을 클릭하거나 목록에서 선택하세요.<br/>작품을 연 뒤 ← → 키로 이동하고 Esc로 돌아올 수 있습니다.</p></>}
     </dialog>
+    </div>
   </main>;
 }
 
